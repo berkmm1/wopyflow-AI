@@ -94,7 +94,7 @@
                         <div class="relative w-24 h-24">
                             <svg class="w-24 h-24 transform -rotate-90">
                                 <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" class="text-gray-200" />
-                                <circle id="scoreCircle" cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="text-blue-600 transition-all duration-1000" />
+                                <circle id="scoreCircle" cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="text-gray-400 transition-all duration-1000" />
                             </svg>
                             <span id="scoreText" class="absolute inset-0 flex items-center justify-center text-2xl font-bold">0</span>
                         </div>
@@ -157,8 +157,9 @@
                     <!-- Lead Gen Section (Nested inside Results or right after) -->
                     <div class="border-t pt-8 mt-8">
                         <h4 class="text-xl font-bold mb-4">Want a professional conversion optimization report?</h4>
-                        <form id="leadGenForm" class="flex flex-col md:flex-row gap-2">
-                            <input type="email" required placeholder="Enter your email" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <!-- Formspree / Netlify Forms compatible form -->
+                        <form id="leadGenForm" action="https://formspree.io/f/your-form-id" method="POST" class="flex flex-col md:flex-row gap-2">
+                            <input type="email" name="email" required placeholder="Enter your email" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">Send Me the Report</button>
                         </form>
                         <p id="leadGenSuccess" class="text-green-600 font-medium mt-4 hidden">Success! We'll send your professional report shortly.</p>
@@ -181,6 +182,29 @@
                         <p id="pdfFileName" class="text-blue-600 font-medium mt-2"></p>
                     </div>
                     <p id="pdfError" class="text-red-500 text-sm hidden"></p>
+
+                    <!-- AI Prompt Modifiers -->
+                    <div id="aiModifiers" class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Tone of Voice</label>
+                            <select id="pdfTone" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="professional">Professional</option>
+                                <option value="engaging">Engaging & Casual</option>
+                                <option value="witty">Witty & Sharp</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Post Length</label>
+                            <select id="pdfLength" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="short">Short & Punchy</option>
+                                <option value="detailed" selected>Detailed Breakdown</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2 pt-6">
+                            <input type="checkbox" id="pdfEmoji" checked class="w-5 h-5 rounded text-blue-600 focus:ring-blue-500 border-gray-300">
+                            <label for="pdfEmoji" class="text-sm font-medium">Use Emojis</label>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Loading Animation -->
@@ -239,6 +263,13 @@
                         </div>
                         <div id="linkedinText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
                     </div>
+
+                    <div class="pt-6 flex justify-center">
+                        <button onclick="regenerateSocialPosts()" class="bg-gray-800 text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-900 transition flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                            Regenerate Posts
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -268,7 +299,7 @@
             const resultsEl = document.getElementById('analyzerResults');
 
             if (!url) {
-                errorEl.innerText = "Please enter a valid URL.";
+                errorEl.innerText = "Please enter a valid URL (including https://).";
                 errorEl.classList.remove('hidden');
                 return;
             }
@@ -278,18 +309,17 @@
             loadingEl.classList.remove('hidden');
 
             try {
-                // Using allorigins.win as a CORS proxy to fetch the HTML content
                 const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
                 const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error('Failed to fetch the page content.');
+
+                if (!response.ok) throw new Error('CORS Proxy failed to fetch content.');
 
                 const data = await response.json();
                 const html = data.contents;
 
-                if (!html) throw new Error('No content found on the page.');
+                if (!html) throw new Error('No content was returned from the page. It might be blocking automated access.');
 
-                // Simulate AI analysis delay
                 await new Promise(resolve => setTimeout(resolve, 1500));
 
                 const report = performAnalysis(html, url);
@@ -297,7 +327,7 @@
 
             } catch (err) {
                 console.error(err);
-                errorEl.innerText = "Error: Could not analyze the page. This might be due to CORS restrictions or an invalid URL. Try a different URL.";
+                errorEl.innerText = `Analysis Failed: ${err.message}. This is often due to website security policies (CORS) or invalid URLs. Please try a different URL or ensure it's publicly accessible.`;
                 errorEl.classList.remove('hidden');
             } finally {
                 loadingEl.classList.add('hidden');
@@ -308,62 +338,73 @@
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
 
-            // 1. Headline Strength
+            // 1. Headline Strength (Rule-based: Length & Keywords)
             const h1 = doc.querySelector('h1');
             const h1Text = h1 ? h1.innerText.trim() : "";
-            let headline_score = h1Text.length > 10 ? 85 : (h1Text ? 50 : 20);
-            if (h1Text.toLowerCase().includes('how to') || h1Text.toLowerCase().includes('best') || h1Text.length > 30) headline_score += 10;
+            let headline_score = 0;
+            if (h1Text) {
+                if (h1Text.length >= 20 && h1Text.length <= 70) headline_score += 60; // Optimal length
+                else if (h1Text.length > 0) headline_score += 30;
+
+                const powerWords = ['free', 'get', 'new', 'easy', 'save', 'best', 'now', 'today', 'discover', 'results'];
+                if (powerWords.some(w => h1Text.toLowerCase().includes(w))) headline_score += 40;
+            } else {
+                headline_score = 10;
+            }
             headline_score = Math.min(headline_score, 100);
 
-            // 2. CTA Presence
-            const buttons = doc.querySelectorAll('button, a.btn, a[class*="button"], a[class*="cta"]');
-            const ctaKeywords = ['buy', 'get', 'start', 'join', 'subscribe', 'sign up', 'try', 'book', 'demo'];
+            // 2. CTA Presence (Rule-based: Visibility & Intent)
+            const buttons = doc.querySelectorAll('button, a.btn, a[class*="button"], a[class*="cta"], input[type="submit"]');
+            const ctaKeywords = ['buy', 'get', 'start', 'join', 'subscribe', 'sign up', 'try', 'book', 'demo', 'download', 'register'];
             let ctaFound = 0;
             buttons.forEach(btn => {
-                const text = btn.innerText.toLowerCase();
+                const text = btn.innerText.toLowerCase() || btn.value?.toLowerCase() || "";
                 if (ctaKeywords.some(k => text.includes(k))) ctaFound++;
             });
-            let cta_score = ctaFound > 0 ? (ctaFound > 2 ? 100 : 80) : 30;
+            let cta_score = ctaFound > 0 ? (ctaFound >= 2 ? 100 : 75) : 20;
 
-            // 3. Trust Signals
-            const trustKeywords = ['review', 'testimonial', 'guarantee', 'secure', 'trust', 'client', 'partner', 'featured', 'star'];
+            // 3. Trust Signals (Rule-based: Reviews, Testimonials, Logos)
+            const trustKeywords = ['review', 'testimonial', 'guarantee', 'secure', 'trust', 'client', 'partner', 'featured', 'star', 'trusted by'];
             let trustMatches = 0;
             const bodyText = doc.body.innerText.toLowerCase();
             trustKeywords.forEach(k => {
                 if (bodyText.includes(k)) trustMatches++;
             });
-            const logos = doc.querySelectorAll('img[src*="logo"]').length;
-            let trust_score = (trustMatches * 10) + (logos * 5);
-            trust_score = Math.min(Math.max(trust_score, 20), 100);
+            const trustImages = doc.querySelectorAll('img[src*="logo"], img[src*="trust"], img[src*="badge"]').length;
+            let trust_score = (trustMatches * 8) + (trustImages * 10);
+            trust_score = Math.min(Math.max(trust_score, 15), 100);
 
-            // 4. Clarity Score (Target Audience & Offer)
-            const audienceKeywords = ['you', 'your', 'business', 'team', 'grow', 'solve', 'help', 'professional'];
+            // 4. Clarity Score (Target Audience & Offer Strength)
+            const audienceWords = ['you', 'your', 'business', 'team', 'grow', 'solve', 'help', 'professional', 'founder', 'marketing'];
             let audienceMatches = 0;
-            audienceKeywords.forEach(k => {
+            audienceWords.forEach(k => {
                 if (bodyText.includes(k)) audienceMatches++;
             });
-            let clarity_score = Math.min(40 + (audienceMatches * 5), 100);
+            const offerWords = ['deal', 'offer', 'pricing', 'discount', 'free', 'bonus', 'bundle'];
+            let offerMatches = 0;
+            offerWords.forEach(k => {
+                if (bodyText.includes(k)) offerMatches++;
+            });
+
+            let clarity_score = (audienceMatches * 10) + (offerMatches * 15);
+            clarity_score = Math.min(Math.max(clarity_score, 20), 100);
 
             // 5. Conversion Score (Average)
             const conversion_score = Math.round((headline_score + cta_score + trust_score + clarity_score) / 4);
 
             // Improvement Suggestions
             const suggestions = [];
-            if (!h1) suggestions.push("Add a clear H1 headline to the top of your page.");
-            else if (h1Text.length < 20) suggestions.push("Make your headline more descriptive and benefit-driven.");
+            if (!h1) suggestions.push("Critical: Missing H1 tag. Add a clear headline to the top of your page.");
+            else if (h1Text.length < 20) suggestions.push("Your headline is too short. Try making it more benefit-driven (20-70 chars).");
 
-            if (ctaFound < 2) suggestions.push("Add more Call-to-Action buttons in strategic locations (e.g., hero section and footer).");
+            if (ctaFound === 0) suggestions.push("No clear Call-To-Action (CTA) detected. Add visible buttons with action-oriented text.");
+            else if (ctaFound < 2) suggestions.push("Add a secondary CTA in the middle or bottom of the page to capture scrolling users.");
 
-            if (trustMatches < 3) suggestions.push("Include customer testimonials or reviews to build credibility.");
+            if (trustMatches < 3) suggestions.push("Build credibility by adding customer testimonials or social proof badges.");
 
-            if (!bodyText.includes('guarantee')) suggestions.push("Add a risk-reversing element like a money-back guarantee or free trial.");
+            if (offerMatches === 0) suggestions.push("Highlight your offer or value proposition more clearly with pricing or 'free' incentives.");
 
-            if (clarity_score < 70) suggestions.push("Clearly define who your product is for early in the page content.");
-
-            if (suggestions.length < 5) {
-                suggestions.push("Ensure page load speed is optimized for mobile users.");
-                suggestions.push("Use high-quality images that showcase your product in action.");
-            }
+            if (audienceMatches < 3) suggestions.push("Speak directly to your target audience using 'You' and 'Your' more frequently.");
 
             return {
                 headline_score,
@@ -371,7 +412,7 @@
                 trust_score,
                 clarity_score,
                 conversion_score,
-                summary: `Your landing page at ${new URL(url).hostname} has a conversion readiness score of ${conversion_score}/100. ${conversion_score > 70 ? 'It is performing well but has room for optimization.' : 'There are significant opportunities to improve your messaging and trust signals.'}`,
+                summary: `Your landing page at ${new URL(url).hostname} has a conversion readiness score of ${conversion_score}/100. ${conversion_score > 70 ? 'Your page is well-optimized!' : 'There are significant opportunities for improvement.'}`,
                 improvement_suggestions: suggestions.slice(0, 5)
             };
         }
@@ -380,15 +421,30 @@
             const resultsEl = document.getElementById('analyzerResults');
             resultsEl.classList.remove('hidden');
 
-            // Update scores
+            // Update scores & color coding
             document.getElementById('scoreText').innerText = data.conversion_score;
+            const circle = document.getElementById('scoreCircle');
             const offset = 251.2 - (251.2 * data.conversion_score) / 100;
-            document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+            circle.style.strokeDashoffset = offset;
 
-            updateBar('headline', data.headline_score);
-            updateBar('cta', data.cta_score);
-            updateBar('trust', data.trust_score);
-            updateBar('clarity', data.clarity_score);
+            // Color coding logic
+            let colorClass = 'text-red-500';
+            let barColor = 'bg-red-500';
+            if (data.conversion_score >= 70) {
+                colorClass = 'text-green-500';
+                barColor = 'bg-green-500';
+            } else if (data.conversion_score >= 40) {
+                colorClass = 'text-orange-500';
+                barColor = 'bg-orange-500';
+            }
+
+            circle.setAttribute('class', `transition-all duration-1000 ${colorClass}`);
+            document.getElementById('scoreText').setAttribute('class', `absolute inset-0 flex items-center justify-center text-2xl font-bold ${colorClass}`);
+
+            updateBar('headline', data.headline_score, barColor);
+            updateBar('cta', data.cta_score, barColor);
+            updateBar('trust', data.trust_score, barColor);
+            updateBar('clarity', data.clarity_score, barColor);
 
             document.getElementById('analysisSummary').innerText = data.summary;
 
@@ -403,10 +459,14 @@
             resultsEl.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function updateBar(id, score) {
+        function updateBar(id, score, colorClass) {
             document.getElementById(`${id}ScoreVal`).innerText = score + '%';
-            document.getElementById(`${id}Bar`).style.width = score + '%';
+            const bar = document.getElementById(`${id}Bar`);
+            bar.style.width = score + '%';
+            bar.className = `${colorClass} h-2 rounded-full transition-all duration-1000`;
         }
+
+        let lastExtractedText = "";
 
         async function handlePdfUpload(event) {
             const file = event.target.files[0];
@@ -430,15 +490,11 @@
                 const reader = new FileReader();
                 reader.onload = async function() {
                     const typedarray = new Uint8Array(this.result);
-
-                    // Initialize pdf.js
                     const pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
                     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
                     const pdf = await pdfjsLib.getDocument(typedarray).promise;
                     let fullText = "";
-
-                    // Extract text from all pages (limit to first 5 for performance)
                     const numPages = Math.min(pdf.numPages, 5);
                     for (let i = 1; i <= numPages; i++) {
                         const page = await pdf.getPage(i);
@@ -449,13 +505,10 @@
 
                     if (!fullText.trim()) throw new Error('Could not extract text from PDF.');
 
-                    // Simulate AI generation delay
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-
-                    generateSocialPosts(fullText);
+                    lastExtractedText = fullText;
+                    regenerateSocialPosts();
                 };
                 reader.readAsArrayBuffer(file);
-
             } catch (err) {
                 console.error(err);
                 errorEl.innerText = "Error: Could not process PDF. Please try a different file.";
@@ -465,41 +518,60 @@
             }
         }
 
-        function generateSocialPosts(text) {
-            const resultsEl = document.getElementById('pdfResults');
-            resultsEl.classList.remove('hidden');
+        async function regenerateSocialPosts() {
+            if (!lastExtractedText) return;
 
-            // Simple logic to extract key points from text
+            const loadingEl = document.getElementById('pdfLoading');
+            const resultsEl = document.getElementById('pdfResults');
+
+            resultsEl.classList.add('hidden');
+            loadingEl.classList.remove('hidden');
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            generateSocialPosts(lastExtractedText);
+
+            loadingEl.classList.add('hidden');
+            resultsEl.classList.remove('hidden');
+            resultsEl.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateSocialPosts(text) {
+            const tone = document.getElementById('pdfTone').value;
+            const length = document.getElementById('pdfLength').value;
+            const useEmoji = document.getElementById('pdfEmoji').checked;
+
             const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
-            const title = sentences[0] ? sentences[0].trim().substring(0, 100) : "Your Content";
-            const points = sentences.slice(1, 6).map(s => s.trim());
+            const title = sentences[0] ? sentences[0].trim().substring(0, 100) : "Expert Content";
+            const points = sentences.slice(1, length === 'short' ? 4 : 6).map(s => s.trim());
+
+            const emoji = (e) => useEmoji ? e : "";
+            const t = (p, e) => tone === 'witty' ? `💡 ${p}` : (tone === 'engaging' ? `✨ ${p}` : p);
 
             // Instagram Carousel
-            let igCarousel = `Slide 1: ${title}\n\n`;
+            let igCarousel = `Slide 1: ${emoji("🚀 ")}${title}\n\n`;
             points.forEach((p, i) => {
-                igCarousel += `Slide ${i+2}: ${p}\n\n`;
+                igCarousel += `Slide ${i+2}: ${t(p, emoji("✅ "))}\n\n`;
             });
-            igCarousel += `Slide ${points.length + 2}: Follow for more! #marketing #content`;
+            igCarousel += `Slide ${points.length + 2}: ${emoji("🔗 ")}Follow for more insights! #marketing #tips`;
             document.getElementById('igCarouselText').innerText = igCarousel;
 
             // Instagram Single Post
-            document.getElementById('igSingleText').innerText = `🚀 ${title}\n\n${points[0]}\n\nDid you know this? Let us know in the comments! 👇\n\n#tips #strategy #business`;
+            document.getElementById('igSingleText').innerText = `${emoji("📈 ")}${title}\n\n${points[0]}\n\n${emoji("👇 ")}What's your take? Let's discuss!\n\n#growth #business #strategy`;
 
             // Reels Caption
-            document.getElementById('reelsText').innerText = `POV: You're mastering ${title.toLowerCase().substring(0, 30)}... ✨\n\nCheck out the full breakdown in our bio! 🔗\n\n#reels #growth #trending`;
+            document.getElementById('reelsText').innerText = `POV: You just discovered ${title.toLowerCase().substring(0, 30)}... ${emoji("👀")}\n\nFull breakdown in the caption! ${emoji("🔥")}\n\n#reels #viral #howto`;
 
             // Twitter Thread
-            let twitterThread = `1/5 🚀 ${title}\n\n`;
-            points.slice(0, 4).forEach((p, i) => {
-                twitterThread += `${i+2}/5 ${p}\n\n`;
+            let twitterThread = `1/${points.length + 1} ${emoji("🧵 ")}${title}\n\n`;
+            points.forEach((p, i) => {
+                twitterThread += `${i+2}/${points.length + 1} ${p}\n\n`;
             });
-            twitterThread += `5/5 Hope you found this helpful! Follow @WopyflowAI for more tips! 🧵👇`;
+            twitterThread += `${emoji("✅ ")}Follow @WopyflowAI for more!`;
             document.getElementById('twitterText').innerText = twitterThread;
 
             // LinkedIn Post
-            document.getElementById('linkedinText').innerText = `I'm excited to share some insights on ${title}.\n\nKey takeaways:\n\n- ${points.join('\n- ')}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership`;
-
-            resultsEl.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('linkedinText').innerText = `${emoji("🤝 ")}I've been looking into ${title} and found these key insights:\n\n${points.map(p => `- ${p}`).join('\n')}\n\n${emoji("🚀 ")}Which point resonates most with your business? #networking #future`;
         }
         function showTab(tab) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
