@@ -133,11 +133,20 @@
                         <div>
                             <div class="mb-4">
                                 <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">Clarity Score</span>
-                                    <span id="clarityScoreVal" class="text-sm font-medium">0%</span>
+                                    <span class="text-sm font-medium">Target Audience Clarity</span>
+                                    <span id="audienceScoreVal" class="text-sm font-medium">0%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="clarityBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                    <div id="audienceBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">Offer Clarity</span>
+                                    <span id="offerScoreVal" class="text-sm font-medium">0%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="offerBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
@@ -249,9 +258,9 @@
     <footer class="bg-gray-900 text-white py-12 px-4">
         <div class="max-w-4xl mx-auto text-center">
             <h3 class="text-2xl font-bold mb-4">Need help improving your landing page performance?</h3>
-            <p class="text-gray-400 mb-8">Contact us for professional setup and custom conversion strategies.</p>
+            <p class="text-gray-400 mb-8">Contact us for professional setup</p>
             <a href="mailto:hello@wopyflow.ai" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-700 transition">
-                Contact Us
+                Contact us for professional setup
             </a>
             <div class="mt-12 pt-8 border-t border-gray-800 text-sm text-gray-500">
                 &copy; 2023 Wopyflow AI. All rights reserved.
@@ -336,16 +345,24 @@
             let trust_score = (trustMatches * 10) + (logos * 5);
             trust_score = Math.min(Math.max(trust_score, 20), 100);
 
-            // 4. Clarity Score (Target Audience & Offer)
+            // 4. Target Audience Clarity
             const audienceKeywords = ['you', 'your', 'business', 'team', 'grow', 'solve', 'help', 'professional'];
             let audienceMatches = 0;
             audienceKeywords.forEach(k => {
                 if (bodyText.includes(k)) audienceMatches++;
             });
-            let clarity_score = Math.min(40 + (audienceMatches * 5), 100);
+            let audience_score = Math.min(40 + (audienceMatches * 5), 100);
 
-            // 5. Conversion Score (Average)
-            const conversion_score = Math.round((headline_score + cta_score + trust_score + clarity_score) / 4);
+            // 5. Offer Clarity
+            const offerKeywords = ['save', 'fast', 'easy', 'get', 'improve', 'results', 'solution', 'service', 'product'];
+            let offerMatches = 0;
+            offerKeywords.forEach(k => {
+                if (bodyText.includes(k)) offerMatches++;
+            });
+            let offer_score = Math.min(40 + (offerMatches * 5), 100);
+
+            // 6. Conversion Score (Average)
+            const conversion_score = Math.round((headline_score + cta_score + trust_score + audience_score + offer_score) / 5);
 
             // Improvement Suggestions
             const suggestions = [];
@@ -358,18 +375,31 @@
 
             if (!bodyText.includes('guarantee')) suggestions.push("Add a risk-reversing element like a money-back guarantee or free trial.");
 
-            if (clarity_score < 70) suggestions.push("Clearly define who your product is for early in the page content.");
+            if (audience_score < 70) suggestions.push("Clearly define who your product is for early in the page content.");
 
-            if (suggestions.length < 5) {
-                suggestions.push("Ensure page load speed is optimized for mobile users.");
-                suggestions.push("Use high-quality images that showcase your product in action.");
+            if (offer_score < 70) suggestions.push("Highlight the core benefits and value proposition of your offer more clearly.");
+
+            // Ensure exactly 5 suggestions
+            const defaults = [
+                "Optimize your page for faster loading times to reduce bounce rate.",
+                "Ensure your mobile experience is seamless and easy to navigate.",
+                "Use high-quality visuals that support your messaging.",
+                "A/B test your headlines to find what resonates best with your audience.",
+                "Simplify your form fields to increase submission rates."
+            ];
+
+            while (suggestions.length < 5) {
+                const nextDefault = defaults.shift();
+                if (!suggestions.includes(nextDefault)) suggestions.push(nextDefault);
             }
 
             return {
                 headline_score,
                 cta_score,
                 trust_score,
-                clarity_score,
+                clarity_score: audience_score, // As per JSON requirement
+                audience_score,
+                offer_score,
                 conversion_score,
                 summary: `Your landing page at ${new URL(url).hostname} has a conversion readiness score of ${conversion_score}/100. ${conversion_score > 70 ? 'It is performing well but has room for optimization.' : 'There are significant opportunities to improve your messaging and trust signals.'}`,
                 improvement_suggestions: suggestions.slice(0, 5)
@@ -383,12 +413,20 @@
             // Update scores
             document.getElementById('scoreText').innerText = data.conversion_score;
             const offset = 251.2 - (251.2 * data.conversion_score) / 100;
-            document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.style.strokeDashoffset = offset;
+
+            // Color code main score
+            scoreCircle.classList.remove('text-red-500', 'text-orange-500', 'text-green-500', 'text-blue-600');
+            if (data.conversion_score < 40) scoreCircle.classList.add('text-red-500');
+            else if (data.conversion_score < 70) scoreCircle.classList.add('text-orange-500');
+            else scoreCircle.classList.add('text-green-500');
 
             updateBar('headline', data.headline_score);
             updateBar('cta', data.cta_score);
             updateBar('trust', data.trust_score);
-            updateBar('clarity', data.clarity_score);
+            updateBar('audience', data.audience_score);
+            updateBar('offer', data.offer_score);
 
             document.getElementById('analysisSummary').innerText = data.summary;
 
@@ -404,8 +442,16 @@
         }
 
         function updateBar(id, score) {
-            document.getElementById(`${id}ScoreVal`).innerText = score + '%';
-            document.getElementById(`${id}Bar`).style.width = score + '%';
+            const bar = document.getElementById(`${id}Bar`);
+            const val = document.getElementById(`${id}ScoreVal`);
+            val.innerText = score + '%';
+            bar.style.width = score + '%';
+
+            // Color coding progress bars
+            bar.classList.remove('bg-red-500', 'bg-orange-500', 'bg-green-500', 'bg-blue-600');
+            if (score < 40) bar.classList.add('bg-red-500');
+            else if (score < 70) bar.classList.add('bg-orange-500');
+            else bar.classList.add('bg-green-500');
         }
 
         async function handlePdfUpload(event) {
@@ -470,34 +516,48 @@
             resultsEl.classList.remove('hidden');
 
             // Simple logic to extract key points from text
-            const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
-            const title = sentences[0] ? sentences[0].trim().substring(0, 100) : "Your Content";
-            const points = sentences.slice(1, 6).map(s => s.trim());
+            const sentences = text.split(/[.!?\n]/).filter(s => s.trim().length > 15);
+            const title = sentences[0] ? sentences[0].trim().substring(0, 100) : "Your Content Content";
+
+            // Ensure we have at least 5 points for various outputs
+            let points = sentences.slice(1, 10).map(s => s.trim());
+            const fallbackPoints = [
+                "Understand the core message and its implications.",
+                "Implement these strategies to see immediate growth.",
+                "Focus on the key takeaways for your specific needs.",
+                "Share these insights with your team for better alignment.",
+                "Stay consistent with your approach for long-term success."
+            ];
+            while (points.length < 5) {
+                points.push(fallbackPoints[points.length]);
+            }
 
             // Instagram Carousel
-            let igCarousel = `Slide 1: ${title}\n\n`;
-            points.forEach((p, i) => {
-                igCarousel += `Slide ${i+2}: ${p}\n\n`;
+            let igCarousel = `📸 **Instagram Carousel Plan**\n\n`;
+            igCarousel += `Slide 1: 🚀 ${title}\n\n`;
+            points.slice(0, 5).forEach((p, i) => {
+                igCarousel += `Slide ${i+2}: 💡 ${p}\n\n`;
             });
-            igCarousel += `Slide ${points.length + 2}: Follow for more! #marketing #content`;
+            igCarousel += `Slide ${Math.min(points.length, 5) + 2}: 🎯 Follow @WopyflowAI for more! #marketing #tips`;
             document.getElementById('igCarouselText').innerText = igCarousel;
 
             // Instagram Single Post
-            document.getElementById('igSingleText').innerText = `🚀 ${title}\n\n${points[0]}\n\nDid you know this? Let us know in the comments! 👇\n\n#tips #strategy #business`;
+            document.getElementById('igSingleText').innerText = `✨ **Quick Insights**\n\n🚀 ${title}\n\n${points[0]}\n\n${points[1]}\n\nDid you know this? Let us know in the comments! 👇\n\n#tips #strategy #business #growth`;
 
             // Reels Caption
-            document.getElementById('reelsText').innerText = `POV: You're mastering ${title.toLowerCase().substring(0, 30)}... ✨\n\nCheck out the full breakdown in our bio! 🔗\n\n#reels #growth #trending`;
+            document.getElementById('reelsText').innerText = `🎬 **Reels Breakdown**\n\nPOV: You're mastering ${title.toLowerCase().substring(0, 40)}... ✨\n\nKey takeaway: ${points[0]}\n\nCheck out the full breakdown in our bio! 🔗\n\n#reels #growth #trending #business`;
 
-            // Twitter Thread
-            let twitterThread = `1/5 🚀 ${title}\n\n`;
-            points.slice(0, 4).forEach((p, i) => {
-                twitterThread += `${i+2}/5 ${p}\n\n`;
-            });
+            // Twitter Thread (Exactly 5 tweets)
+            let twitterThread = `🧵 **Twitter Thread (5 Tweets)**\n\n`;
+            twitterThread += `1/5 🚀 ${title}\n\n`;
+            twitterThread += `2/5 💡 ${points[0]}\n\n`;
+            twitterThread += `3/5 🎯 ${points[1]}\n\n`;
+            twitterThread += `4/5 🔥 ${points[2]}\n\n`;
             twitterThread += `5/5 Hope you found this helpful! Follow @WopyflowAI for more tips! 🧵👇`;
             document.getElementById('twitterText').innerText = twitterThread;
 
             // LinkedIn Post
-            document.getElementById('linkedinText').innerText = `I'm excited to share some insights on ${title}.\n\nKey takeaways:\n\n- ${points.join('\n- ')}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership`;
+            document.getElementById('linkedinText').innerText = `💼 **LinkedIn Insights**\n\nI'm excited to share some key takeaways on ${title}.\n\nHere's what you need to know:\n\n✅ ${points[0]}\n✅ ${points[1]}\n✅ ${points[2]}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership #growth`;
 
             resultsEl.scrollIntoView({ behavior: 'smooth' });
         }
