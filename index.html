@@ -33,6 +33,33 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
@@ -86,58 +113,88 @@
 
                 <!-- Results Display -->
                 <div id="analyzerResults" class="hidden mt-8">
-                    <div class="flex items-center justify-between mb-8">
-                        <div>
+                    <div class="flex flex-col md:flex-row items-center justify-between mb-8 gap-8">
+                        <div class="flex-1">
                             <h4 class="text-xl font-bold">Conversion Readiness Score</h4>
-                            <p class="text-gray-500">Based on analysis of 5 key metrics</p>
+                            <p class="text-gray-500 mb-4">Overall rating based on key optimization metrics</p>
+
+                            <div class="w-full bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
+                                <div id="conversionScoreBar" class="h-4 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs font-bold uppercase tracking-wider">
+                                <span class="text-red-500">Poor</span>
+                                <span class="text-orange-500">Average</span>
+                                <span class="text-green-500">Excellent</span>
+                            </div>
                         </div>
-                        <div class="relative w-24 h-24">
-                            <svg class="w-24 h-24 transform -rotate-90">
-                                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" class="text-gray-200" />
-                                <circle id="scoreCircle" cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="text-blue-600 transition-all duration-1000" />
+                        <div class="relative w-32 h-32 flex-shrink-0">
+                            <svg class="w-32 h-32 transform -rotate-90">
+                                <circle cx="64" cy="64" r="56" stroke="currentColor" stroke-width="12" fill="transparent" class="text-gray-100" />
+                                <circle id="scoreCircle" cx="64" cy="64" r="56" stroke="currentColor" stroke-width="12" fill="transparent" stroke-dasharray="351.8" stroke-dashoffset="351.8" class="transition-all duration-1000" />
                             </svg>
-                            <span id="scoreText" class="absolute inset-0 flex items-center justify-center text-2xl font-bold">0</span>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="scoreText" class="text-3xl font-bold">0</span>
+                                <span class="text-[10px] uppercase text-gray-400 font-bold">Score</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div>
-                            <div class="mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 mb-10">
+                        <div class="space-y-6">
+                            <div>
                                 <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">Headline Strength</span>
-                                    <span id="headlineScoreVal" class="text-sm font-medium">0%</span>
+                                    <span class="text-sm font-semibold">Headline Strength</span>
+                                    <span id="headlineScoreVal" class="text-sm font-bold">0%</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="headlineBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div id="headlineBar" class="h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                                 </div>
                             </div>
-                            <div class="mb-4">
+                            <div>
                                 <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">CTA Presence</span>
-                                    <span id="ctaScoreVal" class="text-sm font-medium">0%</span>
+                                    <span class="text-sm font-semibold">CTA Presence</span>
+                                    <span id="ctaScoreVal" class="text-sm font-bold">0%</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="ctaBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div id="ctaBar" class="h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                                 </div>
                             </div>
-                            <div class="mb-4">
+                            <div>
                                 <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">Trust Signals</span>
-                                    <span id="trustScoreVal" class="text-sm font-medium">0%</span>
+                                    <span class="text-sm font-semibold">Trust Signals</span>
+                                    <span id="trustScoreVal" class="text-sm font-bold">0%</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="trustBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div id="trustBar" class="h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            <div class="mb-4">
+                        <div class="space-y-6">
+                            <div>
                                 <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">Clarity Score</span>
-                                    <span id="clarityScoreVal" class="text-sm font-medium">0%</span>
+                                    <span class="text-sm font-semibold">Target Audience Clarity</span>
+                                    <span id="audienceScoreVal" class="text-sm font-bold">0%</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="clarityBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div id="audienceBar" class="h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-semibold">Offer Clarity</span>
+                                    <span id="offerScoreVal" class="text-sm font-bold">0%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div id="offerBar" class="h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-semibold">Overall Clarity</span>
+                                    <span id="clarityScoreVal" class="text-sm font-bold">0%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div id="clarityBar" class="h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
@@ -259,6 +316,8 @@
         </div>
     </footer>
 
+    <div id="toast">Copied to clipboard!</div>
+
     <script>
         async function analyzeUrl() {
             const urlInput = document.getElementById('lpUrl');
@@ -268,7 +327,7 @@
             const resultsEl = document.getElementById('analyzerResults');
 
             if (!url) {
-                errorEl.innerText = "Please enter a valid URL.";
+                errorEl.innerText = "Please enter a valid landing page URL.";
                 errorEl.classList.remove('hidden');
                 return;
             }
@@ -278,26 +337,27 @@
             loadingEl.classList.remove('hidden');
 
             try {
+                const finalUrl = url.startsWith('http') ? url : `https://${url}`;
                 // Using allorigins.win as a CORS proxy to fetch the HTML content
-                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(finalUrl)}`;
 
                 const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error('Failed to fetch the page content.');
+                if (!response.ok) throw new Error('The proxy service is currently unavailable. Please try again later.');
 
                 const data = await response.json();
                 const html = data.contents;
 
-                if (!html) throw new Error('No content found on the page.');
+                if (!html) throw new Error('Could not retrieve content from this URL. The site might be blocking automated access or the URL is invalid.');
 
                 // Simulate AI analysis delay
                 await new Promise(resolve => setTimeout(resolve, 1500));
 
-                const report = performAnalysis(html, url);
+                const report = performAnalysis(html, finalUrl);
                 displayAnalysis(report);
 
             } catch (err) {
                 console.error(err);
-                errorEl.innerText = "Error: Could not analyze the page. This might be due to CORS restrictions or an invalid URL. Try a different URL.";
+                errorEl.innerText = `Analysis Failed: ${err.message}`;
                 errorEl.classList.remove('hidden');
             } finally {
                 loadingEl.classList.add('hidden');
@@ -311,67 +371,84 @@
             // 1. Headline Strength
             const h1 = doc.querySelector('h1');
             const h1Text = h1 ? h1.innerText.trim() : "";
-            let headline_score = h1Text.length > 10 ? 85 : (h1Text ? 50 : 20);
-            if (h1Text.toLowerCase().includes('how to') || h1Text.toLowerCase().includes('best') || h1Text.length > 30) headline_score += 10;
+            let headline_score = h1Text.length > 15 ? 85 : (h1Text ? 50 : 20);
+            const highImpactWords = ['free', 'limited', 'instant', 'guaranteed', 'proven', 'secret', 'growth', 'fast'];
+            highImpactWords.forEach(w => { if (h1Text.toLowerCase().includes(w)) headline_score += 5; });
             headline_score = Math.min(headline_score, 100);
 
             // 2. CTA Presence
-            const buttons = doc.querySelectorAll('button, a.btn, a[class*="button"], a[class*="cta"]');
-            const ctaKeywords = ['buy', 'get', 'start', 'join', 'subscribe', 'sign up', 'try', 'book', 'demo'];
+            const buttons = doc.querySelectorAll('button, a.btn, a[class*="button"], a[class*="cta"], input[type="submit"]');
+            const ctaKeywords = ['buy', 'get', 'start', 'join', 'subscribe', 'sign up', 'try', 'book', 'demo', 'download', 'register'];
             let ctaFound = 0;
             buttons.forEach(btn => {
-                const text = btn.innerText.toLowerCase();
+                const text = (btn.innerText || btn.value || "").toLowerCase();
                 if (ctaKeywords.some(k => text.includes(k))) ctaFound++;
             });
             let cta_score = ctaFound > 0 ? (ctaFound > 2 ? 100 : 80) : 30;
 
             // 3. Trust Signals
-            const trustKeywords = ['review', 'testimonial', 'guarantee', 'secure', 'trust', 'client', 'partner', 'featured', 'star'];
+            const trustKeywords = ['review', 'testimonial', 'guarantee', 'secure', 'trust', 'client', 'partner', 'featured', 'star', 'customer', 'award', 'verified'];
             let trustMatches = 0;
             const bodyText = doc.body.innerText.toLowerCase();
             trustKeywords.forEach(k => {
-                if (bodyText.includes(k)) trustMatches++;
+                const regex = new RegExp(k, 'g');
+                const matches = bodyText.match(regex);
+                if (matches) trustMatches += matches.length;
             });
-            const logos = doc.querySelectorAll('img[src*="logo"]').length;
-            let trust_score = (trustMatches * 10) + (logos * 5);
-            trust_score = Math.min(Math.max(trust_score, 20), 100);
+            const logos = doc.querySelectorAll('img[src*="logo"], img[alt*="logo"]').length;
+            let trust_score = Math.min(20 + (trustMatches * 4) + (logos * 8), 100);
 
-            // 4. Clarity Score (Target Audience & Offer)
-            const audienceKeywords = ['you', 'your', 'business', 'team', 'grow', 'solve', 'help', 'professional'];
+            // 4. Target Audience Clarity
+            const audienceKeywords = ['you', 'your', 'founder', 'marketer', 'business', 'team', 'company', 'agency', 'professional', 'creator'];
             let audienceMatches = 0;
             audienceKeywords.forEach(k => {
                 if (bodyText.includes(k)) audienceMatches++;
             });
-            let clarity_score = Math.min(40 + (audienceMatches * 5), 100);
+            let audience_score = Math.min(30 + (audienceMatches * 8), 100);
 
-            // 5. Conversion Score (Average)
-            const conversion_score = Math.round((headline_score + cta_score + trust_score + clarity_score) / 4);
+            // 5. Offer Clarity
+            const offerKeywords = ['feature', 'benefit', 'pricing', 'plan', 'solution', 'service', 'product', 'how it works'];
+            let offerMatches = 0;
+            offerKeywords.forEach(k => {
+                if (bodyText.includes(k)) offerMatches++;
+            });
+            let offer_score = Math.min(30 + (offerMatches * 10), 100);
+
+            // Clarity Score (Average of Audience and Offer)
+            const clarity_score = Math.round((audience_score + offer_score) / 2);
+
+            // Conversion Score (Weighted Average)
+            const conversion_score = Math.round((headline_score * 0.25) + (cta_score * 0.25) + (trust_score * 0.2) + (audience_score * 0.15) + (offer_score * 0.15));
 
             // Improvement Suggestions
             const suggestions = [];
-            if (!h1) suggestions.push("Add a clear H1 headline to the top of your page.");
-            else if (h1Text.length < 20) suggestions.push("Make your headline more descriptive and benefit-driven.");
+            if (!h1) suggestions.push("Add a compelling H1 headline that addresses your customer's primary pain point.");
+            else if (h1Text.length < 25) suggestions.push("Expand your headline to include a more specific benefit or unique value proposition.");
 
-            if (ctaFound < 2) suggestions.push("Add more Call-to-Action buttons in strategic locations (e.g., hero section and footer).");
+            if (ctaFound < 2) suggestions.push("Add another Call-to-Action button above the fold or in a sticky header.");
+            if (!ctaKeywords.some(k => bodyText.includes(k))) suggestions.push("Use more action-oriented language in your buttons (e.g., 'Get Started' instead of 'Submit').");
 
-            if (trustMatches < 3) suggestions.push("Include customer testimonials or reviews to build credibility.");
+            if (trustMatches < 5) suggestions.push("Boost trust by adding social proof like customer logos or specific success metrics.");
+            if (!bodyText.includes('guarantee')) suggestions.push("Consider adding a risk-reversal element like a 30-day money-back guarantee.");
 
-            if (!bodyText.includes('guarantee')) suggestions.push("Add a risk-reversing element like a money-back guarantee or free trial.");
+            if (audience_score < 70) suggestions.push("Use more second-person pronouns ('you', 'your') to speak directly to your target audience.");
+            if (offer_score < 70) suggestions.push("Clearly list the main benefits or features of your offer using bullet points.");
 
-            if (clarity_score < 70) suggestions.push("Clearly define who your product is for early in the page content.");
-
-            if (suggestions.length < 5) {
-                suggestions.push("Ensure page load speed is optimized for mobile users.");
-                suggestions.push("Use high-quality images that showcase your product in action.");
+            // Ensure exactly 5 suggestions
+            while (suggestions.length < 5) {
+                suggestions.push("Optimize all images for faster page loading and better mobile experience.");
+                if (suggestions.length < 5) suggestions.push("Ensure your primary CTA is highly visible with a high-contrast color.");
             }
 
             return {
                 headline_score,
                 cta_score,
                 trust_score,
+                audience_score,
+                offer_score,
                 clarity_score,
                 conversion_score,
-                summary: `Your landing page at ${new URL(url).hostname} has a conversion readiness score of ${conversion_score}/100. ${conversion_score > 70 ? 'It is performing well but has room for optimization.' : 'There are significant opportunities to improve your messaging and trust signals.'}`,
+                summary: `Your landing page at ${new URL(url).hostname} has a conversion readiness score of ${conversion_score}/100. ${conversion_score > 70 ? 'It is well-optimized but can still benefit from minor tweaks.' : 'There are significant gaps in your conversion strategy that should be addressed immediately.'}`,
                 improvement_suggestions: suggestions.slice(0, 5)
             };
         }
@@ -382,12 +459,23 @@
 
             // Update scores
             document.getElementById('scoreText').innerText = data.conversion_score;
-            const offset = 251.2 - (251.2 * data.conversion_score) / 100;
-            document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+            const circle = document.getElementById('scoreCircle');
+            const offset = 351.8 - (351.8 * data.conversion_score) / 100;
+            circle.style.strokeDashoffset = offset;
+
+            // Set circle color based on score
+            circle.setAttribute('class', `transition-all duration-1000 ${getColorClass(data.conversion_score, 'stroke')}`);
+
+            // Update horizontal score bar
+            const scoreBar = document.getElementById('conversionScoreBar');
+            scoreBar.style.width = data.conversion_score + '%';
+            scoreBar.className = `h-4 rounded-full transition-all duration-1000 ${getColorClass(data.conversion_score, 'bg')}`;
 
             updateBar('headline', data.headline_score);
             updateBar('cta', data.cta_score);
             updateBar('trust', data.trust_score);
+            updateBar('audience', data.audience_score);
+            updateBar('offer', data.offer_score);
             updateBar('clarity', data.clarity_score);
 
             document.getElementById('analysisSummary').innerText = data.summary;
@@ -396,16 +484,29 @@
             list.innerHTML = '';
             data.improvement_suggestions.forEach(s => {
                 const li = document.createElement('li');
-                li.innerText = s;
+                li.className = "flex items-start";
+                li.innerHTML = `<svg class="w-5 h-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> <span>${s}</span>`;
                 list.appendChild(li);
             });
 
             resultsEl.scrollIntoView({ behavior: 'smooth' });
         }
 
+        function getColorClass(score, type) {
+            if (score <= 40) return type === 'bg' ? 'bg-red-500' : 'text-red-500';
+            if (score <= 70) return type === 'bg' ? 'bg-orange-500' : 'text-orange-500';
+            return type === 'bg' ? 'bg-green-500' : 'text-green-500';
+        }
+
         function updateBar(id, score) {
-            document.getElementById(`${id}ScoreVal`).innerText = score + '%';
-            document.getElementById(`${id}Bar`).style.width = score + '%';
+            const bar = document.getElementById(`${id}Bar`);
+            const val = document.getElementById(`${id}ScoreVal`);
+            if (bar && val) {
+                val.innerText = score + '%';
+                val.className = `text-sm font-bold ${getColorClass(score, 'text')}`;
+                bar.style.width = score + '%';
+                bar.className = `h-2 rounded-full transition-all duration-1000 ${getColorClass(score, 'bg')}`;
+            }
         }
 
         async function handlePdfUpload(event) {
@@ -470,34 +571,41 @@
             resultsEl.classList.remove('hidden');
 
             // Simple logic to extract key points from text
-            const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
-            const title = sentences[0] ? sentences[0].trim().substring(0, 100) : "Your Content";
-            const points = sentences.slice(1, 6).map(s => s.trim());
+            const sentences = text.split(/[.!?\n]/).filter(s => s.trim().length > 20).map(s => s.trim());
+            const title = sentences[0] || "Essential Insights from Wopyflow AI";
+
+            // Collect up to 4 key points for Twitter/Carousel
+            const points = sentences.slice(1, 5);
+            while (points.length < 4) {
+                points.push("Leverage AI marketing tools to scale your content production effortlessly.");
+                if (points.length < 4) points.push("Optimize every landing page for maximum conversion with our analyzer.");
+            }
 
             // Instagram Carousel
             let igCarousel = `Slide 1: ${title}\n\n`;
             points.forEach((p, i) => {
                 igCarousel += `Slide ${i+2}: ${p}\n\n`;
             });
-            igCarousel += `Slide ${points.length + 2}: Follow for more! #marketing #content`;
+            igCarousel += `Slide 6: Check the link in bio for more tools! 🚀 #marketing #contentstrategy`;
             document.getElementById('igCarouselText').innerText = igCarousel;
 
             // Instagram Single Post
-            document.getElementById('igSingleText').innerText = `🚀 ${title}\n\n${points[0]}\n\nDid you know this? Let us know in the comments! 👇\n\n#tips #strategy #business`;
+            document.getElementById('igSingleText').innerText = `🚀 ${title}\n\n${points[0]}\n\nAI is changing the game for marketers and founders. Are you ready?\n\nCheck out the full breakdown and tools at Wopyflow AI! 👇\n\n#marketingtips #growthhacking #saas`;
 
             // Reels Caption
-            document.getElementById('reelsText').innerText = `POV: You're mastering ${title.toLowerCase().substring(0, 30)}... ✨\n\nCheck out the full breakdown in our bio! 🔗\n\n#reels #growth #trending`;
+            document.getElementById('reelsText').innerText = `POV: You're using AI to automate your marketing workflow... ✨\n\n${title}\n\nStop working harder, start working smarter. Link in bio! 🔗\n\n#reels #marketingautomation #growth`;
 
-            // Twitter Thread
-            let twitterThread = `1/5 🚀 ${title}\n\n`;
-            points.slice(0, 4).forEach((p, i) => {
-                twitterThread += `${i+2}/5 ${p}\n\n`;
-            });
-            twitterThread += `5/5 Hope you found this helpful! Follow @WopyflowAI for more tips! 🧵👇`;
-            document.getElementById('twitterText').innerText = twitterThread;
+            // Twitter Thread (Exactly 5 Tweets)
+            let tweet1 = `1/5 🚀 ${title}\n\nMarketing is evolving. Here are the key takeaways from our latest analysis. 🧵👇`;
+            let tweet2 = `2/5 ${points[0]}`;
+            let tweet3 = `3/5 ${points[1]}`;
+            let tweet4 = `4/5 ${points[2]}`;
+            let tweet5 = `5/5 ${points[3]}\n\nHope you found this helpful! Follow @WopyflowAI for more insights! 🚀`;
+
+            document.getElementById('twitterText').innerText = `${tweet1}\n\n---\n\n${tweet2}\n\n---\n\n${tweet3}\n\n---\n\n${tweet4}\n\n---\n\n${tweet5}`;
 
             // LinkedIn Post
-            document.getElementById('linkedinText').innerText = `I'm excited to share some insights on ${title}.\n\nKey takeaways:\n\n- ${points.join('\n- ')}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership`;
+            document.getElementById('linkedinText').innerText = `I'm excited to share some deep insights on ${title}.\n\nIn today's fast-paced digital world, content and conversion are king. Here's what we discovered:\n\n- ${points.join('\n- ')}\n\nWhat are your thoughts on using AI for marketing? Let's discuss in the comments!\n\n#marketingstrategy #ai #productivity #leadership`;
 
             resultsEl.scrollIntoView({ behavior: 'smooth' });
         }
@@ -518,7 +626,9 @@
         function copyToClipboard(id) {
             const text = document.getElementById(id).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard!');
+                const toast = document.getElementById('toast');
+                toast.className = 'show';
+                setTimeout(() => { toast.className = toast.className.replace('show', ''); }, 3000);
             });
         }
 
