@@ -18,8 +18,9 @@
         }
         .card {
             background: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(229, 231, 235, 0.5);
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
@@ -32,6 +33,24 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            display: none;
+            animation: fadeInUp 0.3s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translate(-50%, 1rem); }
+            to { opacity: 1; transform: translate(-50%, 0); }
         }
     </style>
 </head>
@@ -55,10 +74,10 @@
         <p class="text-xl text-gray-500 mb-10">Free AI Marketing Tools for Faster Content and Better Conversions</p>
 
         <div class="flex flex-col md:flex-row justify-center gap-4">
-            <a href="#analyzer" class="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition shadow-lg">
+            <a href="#analyzer" class="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 hover:scale-[1.02] transition-all duration-300 shadow-lg">
                 Analyze Landing Page
             </a>
-            <a href="#generator" class="bg-white text-gray-800 border border-gray-300 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition shadow-md">
+            <a href="#generator" class="bg-white text-gray-800 border border-gray-300 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 hover:scale-[1.02] transition-all duration-300 shadow-md">
                 Generate Social Posts From PDF
             </a>
         </div>
@@ -133,11 +152,20 @@
                         <div>
                             <div class="mb-4">
                                 <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">Clarity Score</span>
+                                    <span class="text-sm font-medium">Target Audience Clarity</span>
                                     <span id="clarityScoreVal" class="text-sm font-medium">0%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
                                     <div id="clarityBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">Offer Clarity</span>
+                                    <span id="offerScoreVal" class="text-sm font-medium">0%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="offerBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
@@ -157,8 +185,8 @@
                     <!-- Lead Gen Section (Nested inside Results or right after) -->
                     <div class="border-t pt-8 mt-8">
                         <h4 class="text-xl font-bold mb-4">Want a professional conversion optimization report?</h4>
-                        <form id="leadGenForm" class="flex flex-col md:flex-row gap-2">
-                            <input type="email" required placeholder="Enter your email" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <form id="leadGenForm" name="lead-gen" method="POST" data-netlify="true" class="flex flex-col md:flex-row gap-2">
+                            <input type="email" name="email" required placeholder="Enter your email" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">Send Me the Report</button>
                         </form>
                         <p id="leadGenSuccess" class="text-green-600 font-medium mt-4 hidden">Success! We'll send your professional report shortly.</p>
@@ -171,6 +199,32 @@
         <section id="generator">
             <div class="card p-8">
                 <h3 class="text-2xl font-bold mb-6">PDF to Social Media Post Generator</h3>
+
+                <!-- AI Prompt Modifiers -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tone</label>
+                        <select id="toneSelect" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="professional">Professional</option>
+                            <option value="engaging" selected>Engaging</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Length</label>
+                        <select id="lengthSelect" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="short">Short</option>
+                            <option value="detailed" selected>Detailed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Emojis</label>
+                        <select id="emojiSelect" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="on" selected>On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="flex flex-col gap-4">
                     <div class="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center cursor-pointer hover:border-blue-500 transition" onclick="document.getElementById('pdfInput').click()">
                         <input type="file" id="pdfInput" accept="application/pdf" class="hidden" onchange="handlePdfUpload(event)">
@@ -262,7 +316,7 @@
     <script>
         async function analyzeUrl() {
             const urlInput = document.getElementById('lpUrl');
-            const url = urlInput.value.trim();
+            let url = urlInput.value.trim();
             const errorEl = document.getElementById('analyzerError');
             const loadingEl = document.getElementById('analyzerLoading');
             const resultsEl = document.getElementById('analyzerResults');
@@ -273,11 +327,19 @@
                 return;
             }
 
+            // Ensure URL has protocol
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+
             errorEl.classList.add('hidden');
             resultsEl.classList.add('hidden');
             loadingEl.classList.remove('hidden');
 
             try {
+                // Validate URL
+                const urlObj = new URL(url);
+
                 // Using allorigins.win as a CORS proxy to fetch the HTML content
                 const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
@@ -307,12 +369,13 @@
         function performAnalysis(html, url) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
+            const bodyText = doc.body.innerText.toLowerCase();
 
             // 1. Headline Strength
             const h1 = doc.querySelector('h1');
             const h1Text = h1 ? h1.innerText.trim() : "";
-            let headline_score = h1Text.length > 10 ? 85 : (h1Text ? 50 : 20);
-            if (h1Text.toLowerCase().includes('how to') || h1Text.toLowerCase().includes('best') || h1Text.length > 30) headline_score += 10;
+            let headline_score = h1Text.length > 10 ? 70 : (h1Text ? 40 : 10);
+            if (h1Text.toLowerCase().includes('how to') || h1Text.toLowerCase().includes('best') || h1Text.length > 30) headline_score += 20;
             headline_score = Math.min(headline_score, 100);
 
             // 2. CTA Presence
@@ -323,46 +386,61 @@
                 const text = btn.innerText.toLowerCase();
                 if (ctaKeywords.some(k => text.includes(k))) ctaFound++;
             });
-            let cta_score = ctaFound > 0 ? (ctaFound > 2 ? 100 : 80) : 30;
+            let cta_score = ctaFound > 0 ? (ctaFound > 2 ? 100 : 80) : 20;
 
             // 3. Trust Signals
-            const trustKeywords = ['review', 'testimonial', 'guarantee', 'secure', 'trust', 'client', 'partner', 'featured', 'star'];
+            const trustKeywords = ['review', 'testimonial', 'guarantee', 'secure', 'trust', 'client', 'partner', 'featured', 'star', 'authentic'];
             let trustMatches = 0;
-            const bodyText = doc.body.innerText.toLowerCase();
             trustKeywords.forEach(k => {
                 if (bodyText.includes(k)) trustMatches++;
             });
             const logos = doc.querySelectorAll('img[src*="logo"]').length;
-            let trust_score = (trustMatches * 10) + (logos * 5);
-            trust_score = Math.min(Math.max(trust_score, 20), 100);
+            let trust_score = (trustMatches * 8) + (logos * 5);
+            trust_score = Math.min(Math.max(trust_score, 10), 100);
 
-            // 4. Clarity Score (Target Audience & Offer)
-            const audienceKeywords = ['you', 'your', 'business', 'team', 'grow', 'solve', 'help', 'professional'];
+            // 4. Target Audience Clarity
+            const audienceKeywords = ['you', 'your', 'business', 'team', 'grow', 'solve', 'help', 'professional', 'founder', 'marketer'];
             let audienceMatches = 0;
             audienceKeywords.forEach(k => {
                 if (bodyText.includes(k)) audienceMatches++;
             });
-            let clarity_score = Math.min(40 + (audienceMatches * 5), 100);
+            let clarity_score = Math.min(20 + (audienceMatches * 8), 100);
 
-            // 5. Conversion Score (Average)
-            const conversion_score = Math.round((headline_score + cta_score + trust_score + clarity_score) / 4);
+            // 5. Offer Clarity
+            const offerKeywords = ['price', 'pricing', 'plan', 'feature', 'benefit', 'service', 'product', 'solution', 'offer', 'deal'];
+            let offerMatches = 0;
+            offerKeywords.forEach(k => {
+                if (bodyText.includes(k)) offerMatches++;
+            });
+            let offer_score = Math.min(20 + (offerMatches * 8), 100);
 
-            // Improvement Suggestions
+            // Conversion Score (Average)
+            const conversion_score = Math.round((headline_score + cta_score + trust_score + clarity_score + offer_score) / 5);
+
+            // Improvement Suggestions (Ensure exactly 5)
             const suggestions = [];
-            if (!h1) suggestions.push("Add a clear H1 headline to the top of your page.");
-            else if (h1Text.length < 20) suggestions.push("Make your headline more descriptive and benefit-driven.");
+            if (!h1) suggestions.push("Add a clear, benefit-driven H1 headline to the hero section.");
+            else if (h1Text.length < 20) suggestions.push("Strengthen your headline by focusing on the primary outcome your customers want.");
 
-            if (ctaFound < 2) suggestions.push("Add more Call-to-Action buttons in strategic locations (e.g., hero section and footer).");
+            if (ctaFound < 2) suggestions.push("Increase conversion opportunities by adding CTAs in the header and middle of the page.");
 
-            if (trustMatches < 3) suggestions.push("Include customer testimonials or reviews to build credibility.");
+            if (trustMatches < 4) suggestions.push("Build credibility by adding more trust signals like customer testimonials or partner logos.");
 
-            if (!bodyText.includes('guarantee')) suggestions.push("Add a risk-reversing element like a money-back guarantee or free trial.");
+            if (clarity_score < 70) suggestions.push("Make it immediately obvious who your product is for by mentioning your target audience early.");
 
-            if (clarity_score < 70) suggestions.push("Clearly define who your product is for early in the page content.");
+            if (offer_score < 70) suggestions.push("Clarify your offer by highlighting unique benefits and a simple pricing or feature breakdown.");
 
-            if (suggestions.length < 5) {
-                suggestions.push("Ensure page load speed is optimized for mobile users.");
-                suggestions.push("Use high-quality images that showcase your product in action.");
+            // Fill up to exactly 5 if needed
+            const fillers = [
+                "Optimize page load speed to reduce bounce rates and improve user experience.",
+                "Use high-quality, relevant images that demonstrate your product or service in action.",
+                "Ensure your page is fully responsive for a seamless mobile experience.",
+                "Add a FAQ section to address common objections and reduce friction.",
+                "Include a 'risk-free' guarantee to make the decision easier for new customers."
+            ];
+            while (suggestions.length < 5) {
+                const filler = fillers.shift();
+                if (!suggestions.includes(filler)) suggestions.push(filler);
             }
 
             return {
@@ -370,6 +448,7 @@
                 cta_score,
                 trust_score,
                 clarity_score,
+                offer_score,
                 conversion_score,
                 summary: `Your landing page at ${new URL(url).hostname} has a conversion readiness score of ${conversion_score}/100. ${conversion_score > 70 ? 'It is performing well but has room for optimization.' : 'There are significant opportunities to improve your messaging and trust signals.'}`,
                 improvement_suggestions: suggestions.slice(0, 5)
@@ -383,12 +462,31 @@
             // Update scores
             document.getElementById('scoreText').innerText = data.conversion_score;
             const offset = 251.2 - (251.2 * data.conversion_score) / 100;
-            document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+
+            // Color coding for main score
+            const scoreCircle = document.getElementById('scoreCircle');
+            const scoreText = document.getElementById('scoreText');
+            scoreCircle.style.strokeDashoffset = offset;
+
+            scoreCircle.classList.remove('text-blue-600', 'text-red-500', 'text-orange-500', 'text-green-600');
+            scoreText.classList.remove('text-red-500', 'text-orange-500', 'text-green-600');
+
+            if (data.conversion_score <= 40) {
+                scoreCircle.classList.add('text-red-500');
+                scoreText.classList.add('text-red-500');
+            } else if (data.conversion_score <= 70) {
+                scoreCircle.classList.add('text-orange-500');
+                scoreText.classList.add('text-orange-500');
+            } else {
+                scoreCircle.classList.add('text-green-600');
+                scoreText.classList.add('text-green-600');
+            }
 
             updateBar('headline', data.headline_score);
             updateBar('cta', data.cta_score);
             updateBar('trust', data.trust_score);
             updateBar('clarity', data.clarity_score);
+            updateBar('offer', data.offer_score);
 
             document.getElementById('analysisSummary').innerText = data.summary;
 
@@ -404,8 +502,17 @@
         }
 
         function updateBar(id, score) {
-            document.getElementById(`${id}ScoreVal`).innerText = score + '%';
-            document.getElementById(`${id}Bar`).style.width = score + '%';
+            const valEl = document.getElementById(`${id}ScoreVal`);
+            const barEl = document.getElementById(`${id}Bar`);
+
+            valEl.innerText = score + '%';
+            barEl.style.width = score + '%';
+
+            // Color coding for bars
+            barEl.classList.remove('bg-blue-600', 'bg-red-500', 'bg-orange-500', 'bg-green-600');
+            if (score <= 40) barEl.classList.add('bg-red-500');
+            else if (score <= 70) barEl.classList.add('bg-orange-500');
+            else barEl.classList.add('bg-green-600');
         }
 
         async function handlePdfUpload(event) {
@@ -469,35 +576,56 @@
             const resultsEl = document.getElementById('pdfResults');
             resultsEl.classList.remove('hidden');
 
+            const tone = document.getElementById('toneSelect').value;
+            const length = document.getElementById('lengthSelect').value;
+            const useEmoji = document.getElementById('emojiSelect').value === 'on';
+
+            // Fallback content if extracted text is minimal
+            if (text.trim().length < 100) {
+                text = "Discover how Wopyflow AI transforms your marketing workflow. Our tool specializes in analyzing landing pages for conversion optimization and generating high-impact social media posts from your existing PDF content. Save time, increase reach, and scale your content strategy with ease.";
+            }
+
             // Simple logic to extract key points from text
             const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
-            const title = sentences[0] ? sentences[0].trim().substring(0, 100) : "Your Content";
-            const points = sentences.slice(1, 6).map(s => s.trim());
+            const title = sentences[0] ? sentences[0].trim().substring(0, 100) : "Master Your Content Strategy";
+            const points = sentences.slice(1, 10).map(s => s.trim());
+
+            // Adjust points based on length
+            const displayPoints = length === 'short' ? points.slice(0, 3) : points.slice(0, 6);
+
+            const e = (emoji) => useEmoji ? emoji : "";
+            const t = (str) => tone === 'professional' ? str.replace(/!/g, '.') : str;
 
             // Instagram Carousel
-            let igCarousel = `Slide 1: ${title}\n\n`;
-            points.forEach((p, i) => {
-                igCarousel += `Slide ${i+2}: ${p}\n\n`;
+            let igCarousel = `Slide 1: ${t(title)} ${e('🚀')}\n\n`;
+            displayPoints.forEach((p, i) => {
+                igCarousel += `Slide ${i+2}: ${t(p)}\n\n`;
             });
-            igCarousel += `Slide ${points.length + 2}: Follow for more! #marketing #content`;
+            igCarousel += `Slide ${displayPoints.length + 2}: Follow @WopyflowAI for more! ${e('✨')} #marketing #growth`;
             document.getElementById('igCarouselText').innerText = igCarousel;
 
             // Instagram Single Post
-            document.getElementById('igSingleText').innerText = `🚀 ${title}\n\n${points[0]}\n\nDid you know this? Let us know in the comments! 👇\n\n#tips #strategy #business`;
+            document.getElementById('igSingleText').innerText = `${e('🚀')} ${t(title)}\n\n${t(displayPoints[0])}\n\n${length === 'detailed' ? t(displayPoints[1] || "") + '\n\n' : ''}${t("Check out the link in our bio to learn more!")} ${e('👇')}\n\n#tips #strategy #business`;
 
             // Reels Caption
-            document.getElementById('reelsText').innerText = `POV: You're mastering ${title.toLowerCase().substring(0, 30)}... ✨\n\nCheck out the full breakdown in our bio! 🔗\n\n#reels #growth #trending`;
+            document.getElementById('reelsText').innerText = `POV: You're mastering ${title.toLowerCase().substring(0, 30)}... ${e('✨')}\n\n${t("We broke down the entire strategy for you.")}\n\n${t("Read the full guide via the link in our bio!")} ${e('🔗')}\n\n#reels #growth #trending`;
 
-            // Twitter Thread
-            let twitterThread = `1/5 🚀 ${title}\n\n`;
-            points.slice(0, 4).forEach((p, i) => {
-                twitterThread += `${i+2}/5 ${p}\n\n`;
+            // Twitter Thread (Exactly 5 tweets)
+            let twitterThread = `1/5 ${e('🚀')} ${t(title)}\n\n`;
+
+            // Ensure we have enough content for 5 tweets
+            const tweetPoints = points.length >= 4 ? points.slice(1, 5) : [...points.slice(1), "Consistency is key in any marketing strategy.", "Don't forget to track your metrics and iterate.", "The best time to start was yesterday. The second best time is now."].slice(0, 4);
+
+            tweetPoints.forEach((p, i) => {
+                if (i < 3) {
+                    twitterThread += `${i+2}/5 ${t(p)}\n\n`;
+                }
             });
-            twitterThread += `5/5 Hope you found this helpful! Follow @WopyflowAI for more tips! 🧵👇`;
+            twitterThread += `5/5 ${t("Hope you found this helpful! Follow @WopyflowAI for more daily marketing tips!")} ${e('🧵👇')}`;
             document.getElementById('twitterText').innerText = twitterThread;
 
             // LinkedIn Post
-            document.getElementById('linkedinText').innerText = `I'm excited to share some insights on ${title}.\n\nKey takeaways:\n\n- ${points.join('\n- ')}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership`;
+            document.getElementById('linkedinText').innerText = `${t("I'm excited to share some insights on " + title + ".")}\n\n${t("Key takeaways:")}\n\n- ${displayPoints.map(p => t(p)).join('\n- ')}\n\n${t("What are your thoughts on this? Let's discuss in the comments!")} ${e('💡')}\n\n#professional #networking #leadership`;
 
             resultsEl.scrollIntoView({ behavior: 'smooth' });
         }
@@ -518,8 +646,23 @@
         function copyToClipboard(id) {
             const text = document.getElementById(id).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard!');
+                showToast('Copied to clipboard!');
             });
+        }
+
+        function showToast(message) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast';
+                document.body.appendChild(toast);
+            }
+            toast.innerText = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
         }
 
         // Lead gen form submission
