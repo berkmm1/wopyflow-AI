@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wopyflow AI – Free Landing Page Analyzer and PDF to Social Media Converter</title>
     <meta name="description" content="Analyze landing page conversion scores and turn PDFs into social media posts instantly using Wopyflow AI marketing tools">
+    <meta name="keywords" content="landing page analyzer, pdf to social, conversion rate optimization, content marketing AI">
+    <link rel="canonical" href="https://wopyflow.ai/">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,8 +20,8 @@
         }
         .card {
             background: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
@@ -33,9 +35,47 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            bottom: 30px;
+            font-size: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        #toast.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-zinc-50 text-zinc-900">
 
     <!-- Header -->
     <header class="py-6 px-4 max-w-6xl mx-auto flex justify-between items-center">
@@ -49,16 +89,16 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="py-20 px-4 text-center max-w-4xl mx-auto">
-        <h2 class="text-5xl font-extrabold mb-4">Wopyflow AI</h2>
-        <p class="text-2xl text-gray-600 mb-6">Analyze pages. Convert content. Publish faster.</p>
-        <p class="text-xl text-gray-500 mb-10">Free AI Marketing Tools for Faster Content and Better Conversions</p>
+    <section class="py-24 px-4 text-center max-w-4xl mx-auto">
+        <h2 class="text-6xl font-black mb-4 text-zinc-900">Wopyflow AI</h2>
+        <p class="text-2xl text-zinc-600 mb-6">Analyze pages. Convert content. Publish faster.</p>
+        <p class="text-xl text-zinc-500 mb-10">Free AI Marketing Tools for Faster Content and Better Conversions</p>
 
         <div class="flex flex-col md:flex-row justify-center gap-4">
-            <a href="#analyzer" class="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition shadow-lg">
+            <a href="#analyzer" class="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition shadow-xl">
                 Analyze Landing Page
             </a>
-            <a href="#generator" class="bg-white text-gray-800 border border-gray-300 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition shadow-md">
+            <a href="#generator" class="bg-white text-zinc-800 border border-zinc-300 px-8 py-4 rounded-full font-semibold text-lg hover:bg-zinc-50 transition shadow-lg">
                 Generate Social Posts From PDF
             </a>
         </div>
@@ -86,12 +126,15 @@
 
                 <!-- Results Display -->
                 <div id="analyzerResults" class="hidden mt-8">
-                    <div class="flex items-center justify-between mb-8">
-                        <div>
-                            <h4 class="text-xl font-bold">Conversion Readiness Score</h4>
-                            <p class="text-gray-500">Based on analysis of 5 key metrics</p>
+                    <div class="flex flex-col md:flex-row items-center justify-between mb-8 gap-8">
+                        <div class="flex-1 w-full">
+                            <h4 class="text-xl font-bold mb-2">Conversion Readiness Score</h4>
+                            <p class="text-gray-500 mb-4">Based on analysis of 5 key metrics</p>
+                            <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                                <div id="conversionProgressBar" class="h-full transition-all duration-1000 bg-blue-600" style="width: 0%"></div>
+                            </div>
                         </div>
-                        <div class="relative w-24 h-24">
+                        <div class="relative w-24 h-24 flex-shrink-0">
                             <svg class="w-24 h-24 transform -rotate-90">
                                 <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" class="text-gray-200" />
                                 <circle id="scoreCircle" cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="text-blue-600 transition-all duration-1000" />
@@ -203,14 +246,20 @@
                         <div class="mb-6">
                             <div class="flex justify-between items-center mb-2">
                                 <h5 class="font-bold">Carousel Caption</h5>
-                                <button onclick="copyToClipboard('igCarouselText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                                <button onclick="copyToClipboard('igCarouselText')" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                    Copy
+                                </button>
                             </div>
                             <div id="igCarouselText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <h5 class="font-bold">Single Post Caption</h5>
-                                <button onclick="copyToClipboard('igSingleText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                                <button onclick="copyToClipboard('igSingleText')" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                    Copy
+                                </button>
                             </div>
                             <div id="igSingleText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
                         </div>
@@ -219,7 +268,10 @@
                     <div id="reelsTab" class="tab-content hidden">
                         <div class="flex justify-between items-center mb-2">
                             <h5 class="font-bold">Reels Caption</h5>
-                            <button onclick="copyToClipboard('reelsText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                            <button onclick="copyToClipboard('reelsText')" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                Copy
+                            </button>
                         </div>
                         <div id="reelsText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
                     </div>
@@ -227,7 +279,10 @@
                     <div id="twitterTab" class="tab-content hidden">
                         <div class="flex justify-between items-center mb-2">
                             <h5 class="font-bold">Twitter Thread (5 Tweets)</h5>
-                            <button onclick="copyToClipboard('twitterText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                            <button onclick="copyToClipboard('twitterText')" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                Copy
+                            </button>
                         </div>
                         <div id="twitterText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
                     </div>
@@ -235,7 +290,10 @@
                     <div id="linkedinTab" class="tab-content hidden">
                         <div class="flex justify-between items-center mb-2">
                             <h5 class="font-bold">LinkedIn Post</h5>
-                            <button onclick="copyToClipboard('linkedinText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                            <button onclick="copyToClipboard('linkedinText')" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                Copy
+                            </button>
                         </div>
                         <div id="linkedinText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
                     </div>
@@ -259,7 +317,17 @@
         </div>
     </footer>
 
+    <!-- Toast Container -->
+    <div id="toast">Copied to clipboard!</div>
+
     <script>
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
         async function analyzeUrl() {
             const urlInput = document.getElementById('lpUrl');
             const url = urlInput.value.trim();
@@ -310,9 +378,14 @@
 
             // 1. Headline Strength
             const h1 = doc.querySelector('h1');
+            const metaDesc = doc.querySelector('meta[name="description"]');
+            const ogTitle = doc.querySelector('meta[property="og:title"]');
+
             const h1Text = h1 ? h1.innerText.trim() : "";
-            let headline_score = h1Text.length > 10 ? 85 : (h1Text ? 50 : 20);
+            let headline_score = h1Text.length > 10 ? 80 : (h1Text ? 40 : 10);
             if (h1Text.toLowerCase().includes('how to') || h1Text.toLowerCase().includes('best') || h1Text.length > 30) headline_score += 10;
+            if (ogTitle) headline_score += 5;
+            if (metaDesc) headline_score += 5;
             headline_score = Math.min(headline_score, 100);
 
             // 2. CTA Presence
@@ -326,7 +399,7 @@
             let cta_score = ctaFound > 0 ? (ctaFound > 2 ? 100 : 80) : 30;
 
             // 3. Trust Signals
-            const trustKeywords = ['review', 'testimonial', 'guarantee', 'secure', 'trust', 'client', 'partner', 'featured', 'star'];
+            const trustKeywords = ['review', 'testimonial', 'guarantee', 'secure', 'trust', 'client', 'partner', 'featured', 'star', 'verified', 'certified'];
             let trustMatches = 0;
             const bodyText = doc.body.innerText.toLowerCase();
             trustKeywords.forEach(k => {
@@ -385,6 +458,17 @@
             const offset = 251.2 - (251.2 * data.conversion_score) / 100;
             document.getElementById('scoreCircle').style.strokeDashoffset = offset;
 
+            const mainBar = document.getElementById('conversionProgressBar');
+            mainBar.style.width = data.conversion_score + '%';
+
+            // Color coding
+            let colorClass = 'bg-red-500';
+            if (data.conversion_score >= 70) colorClass = 'bg-green-500';
+            else if (data.conversion_score >= 40) colorClass = 'bg-orange-500';
+
+            mainBar.className = `h-full transition-all duration-1000 ${colorClass}`;
+            document.getElementById('scoreCircle').className = `transition-all duration-1000 ${colorClass.replace('bg-', 'text-')}`;
+
             updateBar('headline', data.headline_score);
             updateBar('cta', data.cta_score);
             updateBar('trust', data.trust_score);
@@ -404,8 +488,16 @@
         }
 
         function updateBar(id, score) {
-            document.getElementById(`${id}ScoreVal`).innerText = score + '%';
-            document.getElementById(`${id}Bar`).style.width = score + '%';
+            const bar = document.getElementById(`${id}Bar`);
+            const valEl = document.getElementById(`${id}ScoreVal`);
+            valEl.innerText = score + '%';
+            bar.style.width = score + '%';
+
+            let colorClass = 'bg-red-500';
+            if (score >= 70) colorClass = 'bg-green-500';
+            else if (score >= 40) colorClass = 'bg-orange-500';
+
+            bar.className = `h-2 rounded-full transition-all duration-1000 ${colorClass}`;
         }
 
         async function handlePdfUpload(event) {
@@ -474,6 +566,11 @@
             const title = sentences[0] ? sentences[0].trim().substring(0, 100) : "Your Content";
             const points = sentences.slice(1, 6).map(s => s.trim());
 
+            // Fill points if too few
+            while (points.length < 5) {
+                points.push("Key Insight: Leverage AI to optimize your marketing workflow and save time.");
+            }
+
             // Instagram Carousel
             let igCarousel = `Slide 1: ${title}\n\n`;
             points.forEach((p, i) => {
@@ -490,9 +587,9 @@
 
             // Twitter Thread
             let twitterThread = `1/5 🚀 ${title}\n\n`;
-            points.slice(0, 4).forEach((p, i) => {
-                twitterThread += `${i+2}/5 ${p}\n\n`;
-            });
+            twitterThread += `2/5 ${points[0]}\n\n`;
+            twitterThread += `3/5 ${points[1]}\n\n`;
+            twitterThread += `4/5 ${points[2]}\n\n`;
             twitterThread += `5/5 Hope you found this helpful! Follow @WopyflowAI for more tips! 🧵👇`;
             document.getElementById('twitterText').innerText = twitterThread;
 
@@ -518,7 +615,7 @@
         function copyToClipboard(id) {
             const text = document.getElementById(id).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard!');
+                showToast('Copied to clipboard!');
             });
         }
 
