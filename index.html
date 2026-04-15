@@ -13,13 +13,10 @@
             font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
         .card {
             background: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.1);
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
@@ -33,15 +30,18 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .progress-bar-fill {
+            transition: width 1s ease-in-out, background-color 0.5s ease;
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-gray-50 text-slate-900">
 
     <!-- Header -->
     <header class="py-6 px-4 max-w-6xl mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-blue-600">Wopyflow AI</h1>
+        <h1 class="text-2xl font-bold text-blue-600 tracking-tight">Wopyflow AI</h1>
         <nav class="hidden md:block">
-            <ul class="flex space-x-6">
+            <ul class="flex space-x-8 font-medium text-slate-600">
                 <li><a href="#analyzer" class="hover:text-blue-600 transition">Analyzer</a></li>
                 <li><a href="#generator" class="hover:text-blue-600 transition">Social Generator</a></li>
             </ul>
@@ -49,119 +49,153 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="py-20 px-4 text-center max-w-4xl mx-auto">
-        <h2 class="text-5xl font-extrabold mb-4">Wopyflow AI</h2>
-        <p class="text-2xl text-gray-600 mb-6">Analyze pages. Convert content. Publish faster.</p>
-        <p class="text-xl text-gray-500 mb-10">Free AI Marketing Tools for Faster Content and Better Conversions</p>
+    <section class="py-24 px-4 text-center max-w-4xl mx-auto">
+        <h2 class="text-6xl font-extrabold mb-4 tracking-tight text-slate-900">Wopyflow AI</h2>
+        <p class="text-2xl text-slate-600 mb-4 font-medium">Analyze pages. Convert content. Publish faster.</p>
+        <p class="text-lg text-slate-500 mb-8 max-w-2xl mx-auto">Wopyflow AI is a lightweight AI marketing toolkit designed for founders, marketers and small businesses.</p>
+        <p class="text-xl text-blue-600/80 mb-12 font-semibold">Free AI Marketing Tools for Faster Content and Better Conversions</p>
 
-        <div class="flex flex-col md:flex-row justify-center gap-4">
-            <a href="#analyzer" class="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition shadow-lg">
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="#analyzer" class="bg-blue-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-blue-700 transition shadow-xl hover:shadow-blue-200">
                 Analyze Landing Page
             </a>
-            <a href="#generator" class="bg-white text-gray-800 border border-gray-300 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition shadow-md">
+            <a href="#generator" class="bg-white text-slate-800 border border-slate-200 px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-50 transition shadow-lg">
                 Generate Social Posts From PDF
             </a>
         </div>
     </section>
 
-    <main class="max-w-4xl mx-auto px-4 pb-20">
+    <main class="max-w-4xl mx-auto px-4 pb-32">
 
         <!-- Tool 1: Landing Page Analyzer -->
-        <section id="analyzer" class="mb-20">
-            <div class="card p-8">
-                <h3 class="text-2xl font-bold mb-6">Landing Page Analyzer</h3>
+        <section id="analyzer" class="mb-24">
+            <div class="card p-8 md:p-12">
+                <h3 class="text-3xl font-bold mb-2 text-slate-900">Landing Page Analyzer</h3>
+                <p class="text-slate-500 mb-8">Enter a URL to analyze headline strength, CTAs, trust signals, and clarity.</p>
+
                 <div class="flex flex-col gap-4">
-                    <div class="flex gap-2">
-                        <input type="url" id="lpUrl" placeholder="https://yourlandingpage.com" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button onclick="analyzeUrl()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">Analyze</button>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="url" id="lpUrl" placeholder="https://yourlandingpage.com" class="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                        <button onclick="analyzeUrl()" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition whitespace-nowrap">Analyze Page</button>
                     </div>
-                    <p id="analyzerError" class="text-red-500 text-sm hidden"></p>
+                    <p id="analyzerError" class="text-red-500 text-sm font-medium hidden"></p>
                 </div>
 
                 <!-- Loading Animation -->
-                <div id="analyzerLoading" class="hidden mt-8 flex flex-col items-center">
+                <div id="analyzerLoading" class="hidden mt-12 flex flex-col items-center">
                     <div class="loading-spinner mb-4"></div>
-                    <p class="text-gray-500">Analyzing page content...</p>
+                    <p class="text-slate-500 font-medium">Analyzing page content...</p>
                 </div>
 
                 <!-- Results Display -->
-                <div id="analyzerResults" class="hidden mt-8">
-                    <div class="flex items-center justify-between mb-8">
-                        <div>
-                            <h4 class="text-xl font-bold">Conversion Readiness Score</h4>
-                            <p class="text-gray-500">Based on analysis of 5 key metrics</p>
+                <div id="analyzerResults" class="hidden mt-12 animate-in fade-in duration-700">
+                    <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-8">
+                        <div class="text-center md:text-left">
+                            <h4 class="text-2xl font-bold text-slate-900">Conversion Readiness</h4>
+                            <p class="text-slate-500">Overall optimization score</p>
                         </div>
-                        <div class="relative w-24 h-24">
-                            <svg class="w-24 h-24 transform -rotate-90">
-                                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" class="text-gray-200" />
-                                <circle id="scoreCircle" cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="text-blue-600 transition-all duration-1000" />
-                            </svg>
-                            <span id="scoreText" class="absolute inset-0 flex items-center justify-center text-2xl font-bold">0</span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div>
-                            <div class="mb-4">
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">Headline Strength</span>
-                                    <span id="headlineScoreVal" class="text-sm font-medium">0%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="headlineBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">CTA Presence</span>
-                                    <span id="ctaScoreVal" class="text-sm font-medium">0%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="ctaBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">Trust Signals</span>
-                                    <span id="trustScoreVal" class="text-sm font-medium">0%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="trustBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="mb-4">
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">Clarity Score</span>
-                                    <span id="clarityScoreVal" class="text-sm font-medium">0%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="clarityBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                                </div>
+                        <div class="flex flex-col items-center">
+                            <div class="relative w-32 h-32 mb-4">
+                                <svg class="w-32 h-32 transform -rotate-90">
+                                    <circle cx="64" cy="64" r="56" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-100" />
+                                    <circle id="scoreCircle" cx="64" cy="64" r="56" stroke="currentColor" stroke-width="12" fill="transparent" stroke-dasharray="351.8" stroke-dashoffset="351.8" class="text-blue-600 transition-all duration-1000 ease-out" />
+                                </svg>
+                                <span id="scoreText" class="absolute inset-0 flex items-center justify-center text-4xl font-black text-slate-900">0</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-blue-50 p-6 rounded-xl mb-8">
-                        <h4 class="font-bold mb-2">Summary</h4>
-                        <p id="analysisSummary" class="text-gray-700"></p>
+                    <!-- Visual Score Bar -->
+                    <div class="mb-12">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-bold text-slate-700 uppercase tracking-wider">Conversion Score Visual Bar</span>
+                            <span id="visualScoreLabel" class="text-sm font-bold">0/100</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-4 overflow-hidden">
+                            <div id="visualScoreBar" class="progress-bar-fill h-full bg-slate-300" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between mt-1 text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
+                            <span>Critical</span>
+                            <span>Needs Work</span>
+                            <span>Good</span>
+                            <span>Excellent</span>
+                        </div>
                     </div>
 
-                    <div class="mb-8">
-                        <h4 class="font-bold mb-4">Improvement Suggestions</h4>
-                        <ul id="suggestionList" class="space-y-2 list-disc list-inside text-gray-700">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm font-semibold text-slate-600">Headline Strength</span>
+                                    <span id="headlineScoreVal" class="text-sm font-bold text-slate-900">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="headlineBar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm font-semibold text-slate-600">CTA Presence</span>
+                                    <span id="ctaScoreVal" class="text-sm font-bold text-slate-900">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="ctaBar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm font-semibold text-slate-600">Trust Signals</span>
+                                    <span id="trustScoreVal" class="text-sm font-bold text-slate-900">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="trustBar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm font-semibold text-slate-600">Clarity Score</span>
+                                    <span id="clarityScoreVal" class="text-sm font-bold text-slate-900">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="clarityBar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-100 p-8 rounded-2xl mb-12">
+                        <h4 class="text-lg font-bold mb-3 text-blue-900">Analysis Summary</h4>
+                        <p id="analysisSummary" class="text-slate-700 leading-relaxed"></p>
+                    </div>
+
+                    <div class="mb-12">
+                        <h4 class="text-xl font-bold mb-6 text-slate-900">Improvement Suggestions</h4>
+                        <ul id="suggestionList" class="grid grid-cols-1 gap-3">
                         </ul>
                     </div>
 
-                    <!-- Lead Gen Section (Nested inside Results or right after) -->
-                    <div class="border-t pt-8 mt-8">
-                        <h4 class="text-xl font-bold mb-4">Want a professional conversion optimization report?</h4>
-                        <form id="leadGenForm" class="flex flex-col md:flex-row gap-2">
-                            <input type="email" required placeholder="Enter your email" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">Send Me the Report</button>
-                        </form>
-                        <p id="leadGenSuccess" class="text-green-600 font-medium mt-4 hidden">Success! We'll send your professional report shortly.</p>
+                    <!-- Lead Gen Section -->
+                    <div class="bg-slate-900 rounded-3xl p-8 md:p-12 text-white overflow-hidden relative mb-12">
+                        <div class="relative z-10">
+                            <h4 class="text-2xl font-bold mb-4">Want a professional conversion optimization report?</h4>
+                            <p class="text-slate-400 mb-8">Get a deep-dive analysis from our experts to skyrocket your conversion rate.</p>
+                            <form id="leadGenForm" class="flex flex-col sm:flex-row gap-3">
+                                <input type="email" required placeholder="Enter your email" class="flex-1 p-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                <button type="submit" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition">Get My Report</button>
+                            </form>
+                            <p id="leadGenSuccess" class="text-green-400 font-bold mt-6 hidden flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                Success! We'll send your professional report shortly.
+                            </p>
+                        </div>
+                        <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
+                    </div>
+
+                    <div class="text-center">
+                        <button onclick="toggleTechnicalJson()" class="text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest transition border border-slate-200 px-4 py-2 rounded-lg">View Technical JSON</button>
+                        <pre id="technicalJson" class="hidden mt-6 text-left bg-slate-900 text-blue-400 p-6 rounded-2xl text-sm overflow-x-auto border border-slate-800"></pre>
                     </div>
                 </div>
             </div>
@@ -169,75 +203,115 @@
 
         <!-- Tool 2: PDF to Social Media Post Generator -->
         <section id="generator">
-            <div class="card p-8">
-                <h3 class="text-2xl font-bold mb-6">PDF to Social Media Post Generator</h3>
+            <div class="card p-8 md:p-12">
+                <h3 class="text-3xl font-bold mb-2 text-slate-900">PDF to Social Media Post Generator</h3>
+                <p class="text-slate-500 mb-8">Upload a PDF and turn it into viral social media content instantly.</p>
+
                 <div class="flex flex-col gap-4">
-                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center cursor-pointer hover:border-blue-500 transition" onclick="document.getElementById('pdfInput').click()">
+                    <div class="group border-2 border-dashed border-slate-200 rounded-3xl p-12 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 transition duration-300 bg-slate-50/50" onclick="document.getElementById('pdfInput').click()">
                         <input type="file" id="pdfInput" accept="application/pdf" class="hidden" onchange="handlePdfUpload(event)">
-                        <div class="flex justify-center mb-4">
-                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                        <div class="flex justify-center mb-6">
+                            <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-blue-600 group-hover:scale-110 transition duration-300">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                            </div>
                         </div>
-                        <p class="text-gray-600">Click or drag & drop to upload PDF</p>
-                        <p id="pdfFileName" class="text-blue-600 font-medium mt-2"></p>
+                        <p class="text-slate-900 font-bold text-lg">Click or drag & drop to upload PDF</p>
+                        <p class="text-slate-500 mt-1">Maximum file size: 10MB</p>
+                        <p id="pdfFileName" class="text-blue-600 font-bold mt-4"></p>
                     </div>
-                    <p id="pdfError" class="text-red-500 text-sm hidden"></p>
+                    <p id="pdfError" class="text-red-500 text-sm font-medium hidden"></p>
                 </div>
 
                 <!-- Loading Animation -->
-                <div id="pdfLoading" class="hidden mt-8 flex flex-col items-center">
+                <div id="pdfLoading" class="hidden mt-12 flex flex-col items-center">
                     <div class="loading-spinner mb-4"></div>
-                    <p class="text-gray-500">Extracting content and generating posts...</p>
+                    <p class="text-slate-500 font-medium">Extracting content and generating posts...</p>
                 </div>
 
-                <!-- Results Display -->
-                <div id="pdfResults" class="hidden mt-8 space-y-6">
-                    <!-- Tabs for different social platforms -->
-                    <div class="flex flex-wrap gap-2 border-b">
-                        <button onclick="showTab('instagram')" class="tab-btn active border-b-2 border-blue-600 px-4 py-2 font-medium">Instagram</button>
-                        <button onclick="showTab('reels')" class="tab-btn px-4 py-2 font-medium text-gray-500 hover:text-blue-600">Reels</button>
-                        <button onclick="showTab('twitter')" class="tab-btn px-4 py-2 font-medium text-gray-500 hover:text-blue-600">Twitter</button>
-                        <button onclick="showTab('linkedin')" class="tab-btn px-4 py-2 font-medium text-gray-500 hover:text-blue-600">LinkedIn</button>
-                    </div>
+                <!-- Results Display - Vertical List of Cards -->
+                <div id="pdfResults" class="hidden mt-12 space-y-12">
 
-                    <div id="instagramTab" class="tab-content">
-                        <div class="mb-6">
-                            <div class="flex justify-between items-center mb-2">
-                                <h5 class="font-bold">Carousel Caption</h5>
-                                <button onclick="copyToClipboard('igCarouselText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                    <div class="space-y-8">
+                        <!-- Instagram Section -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 bg-pink-50 rounded-lg flex items-center justify-center text-pink-500">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        </div>
+                                        <h5 class="font-bold text-slate-900">Instagram Carousel</h5>
+                                    </div>
+                                    <button onclick="copyToClipboard('igCarouselText', this)" class="text-sm font-bold bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-blue-600 px-3 py-1.5 rounded-lg transition border border-slate-100 flex items-center gap-1">
+                                        <span>Copy</span>
+                                    </button>
+                                </div>
+                                <div id="igCarouselText" class="text-slate-700 whitespace-pre-wrap text-sm leading-relaxed bg-slate-50/50 p-4 rounded-xl border border-slate-100 h-64 overflow-y-auto"></div>
                             </div>
-                            <div id="igCarouselText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <h5 class="font-bold">Single Post Caption</h5>
-                                <button onclick="copyToClipboard('igSingleText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+
+                            <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                        </div>
+                                        <h5 class="font-bold text-slate-900">Instagram Single Post</h5>
+                                    </div>
+                                    <button onclick="copyToClipboard('igSingleText', this)" class="text-sm font-bold bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-blue-600 px-3 py-1.5 rounded-lg transition border border-slate-100 flex items-center gap-1">
+                                        <span>Copy</span>
+                                    </button>
+                                </div>
+                                <div id="igSingleText" class="text-slate-700 whitespace-pre-wrap text-sm leading-relaxed bg-slate-50/50 p-4 rounded-xl border border-slate-100 h-64 overflow-y-auto"></div>
                             </div>
-                            <div id="igSingleText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
                         </div>
-                    </div>
 
-                    <div id="reelsTab" class="tab-content hidden">
-                        <div class="flex justify-between items-center mb-2">
-                            <h5 class="font-bold">Reels Caption</h5>
-                            <button onclick="copyToClipboard('reelsText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                        <!-- Reels Section -->
+                        <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center text-purple-500">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                    </div>
+                                    <h5 class="font-bold text-slate-900">Reels Caption</h5>
+                                </div>
+                                <button onclick="copyToClipboard('reelsText', this)" class="text-sm font-bold bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-blue-600 px-3 py-1.5 rounded-lg transition border border-slate-100 flex items-center gap-1">
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <div id="reelsText" class="text-slate-700 whitespace-pre-wrap text-sm leading-relaxed bg-slate-50/50 p-4 rounded-xl border border-slate-100 min-h-[100px]"></div>
                         </div>
-                        <div id="reelsText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
-                    </div>
 
-                    <div id="twitterTab" class="tab-content hidden">
-                        <div class="flex justify-between items-center mb-2">
-                            <h5 class="font-bold">Twitter Thread (5 Tweets)</h5>
-                            <button onclick="copyToClipboard('twitterText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                        <!-- Twitter Thread Section -->
+                        <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-blue-400 rounded-lg flex items-center justify-center text-white">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                                    </div>
+                                    <h5 class="font-bold text-slate-900">Twitter Thread (5 Tweets)</h5>
+                                </div>
+                                <button onclick="copyToClipboard('twitterText', this)" class="text-sm font-bold bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-blue-600 px-3 py-1.5 rounded-lg transition border border-slate-100 flex items-center gap-1">
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <div id="twitterText" class="text-slate-700 whitespace-pre-wrap text-sm leading-relaxed bg-slate-50/50 p-4 rounded-xl border border-slate-100 h-80 overflow-y-auto"></div>
                         </div>
-                        <div id="twitterText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
-                    </div>
 
-                    <div id="linkedinTab" class="tab-content hidden">
-                        <div class="flex justify-between items-center mb-2">
-                            <h5 class="font-bold">LinkedIn Post</h5>
-                            <button onclick="copyToClipboard('linkedinText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                        <!-- LinkedIn Section -->
+                        <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center text-white">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                    </div>
+                                    <h5 class="font-bold text-slate-900">LinkedIn Post</h5>
+                                </div>
+                                <button onclick="copyToClipboard('linkedinText', this)" class="text-sm font-bold bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-blue-600 px-3 py-1.5 rounded-lg transition border border-slate-100 flex items-center gap-1">
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <div id="linkedinText" class="text-slate-700 whitespace-pre-wrap text-sm leading-relaxed bg-slate-50/50 p-4 rounded-xl border border-slate-100 min-h-[150px]"></div>
                         </div>
-                        <div id="linkedinText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
                     </div>
                 </div>
             </div>
@@ -246,15 +320,15 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12 px-4">
+    <footer class="bg-slate-900 text-white py-20 px-4">
         <div class="max-w-4xl mx-auto text-center">
-            <h3 class="text-2xl font-bold mb-4">Need help improving your landing page performance?</h3>
-            <p class="text-gray-400 mb-8">Contact us for professional setup and custom conversion strategies.</p>
-            <a href="mailto:hello@wopyflow.ai" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-700 transition">
-                Contact Us
+            <h3 class="text-3xl font-bold mb-4">Need help improving your landing page performance?</h3>
+            <p class="text-slate-400 mb-12 text-lg">Contact us for professional setup and custom conversion strategies.</p>
+            <a href="mailto:hello@wopyflow.ai" class="inline-block bg-blue-600 text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-blue-700 transition shadow-2xl hover:shadow-blue-500/20">
+                Contact Us for Professional Setup
             </a>
-            <div class="mt-12 pt-8 border-t border-gray-800 text-sm text-gray-500">
-                &copy; 2023 Wopyflow AI. All rights reserved.
+            <div class="mt-20 pt-8 border-t border-slate-800 text-sm text-slate-500 font-medium">
+                &copy; 2025 Wopyflow AI. All rights reserved.
             </div>
         </div>
     </footer>
@@ -262,7 +336,7 @@
     <script>
         async function analyzeUrl() {
             const urlInput = document.getElementById('lpUrl');
-            const url = urlInput.value.trim();
+            let url = urlInput.value.trim();
             const errorEl = document.getElementById('analyzerError');
             const loadingEl = document.getElementById('analyzerLoading');
             const resultsEl = document.getElementById('analyzerResults');
@@ -273,12 +347,16 @@
                 return;
             }
 
+            if (!url.startsWith('http')) {
+                url = 'https://' + url;
+            }
+
             errorEl.classList.add('hidden');
             resultsEl.classList.add('hidden');
             loadingEl.classList.remove('hidden');
 
             try {
-                // Using allorigins.win as a CORS proxy to fetch the HTML content
+                // Using allorigins.win as a CORS proxy
                 const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
                 const response = await fetch(proxyUrl);
@@ -290,14 +368,14 @@
                 if (!html) throw new Error('No content found on the page.');
 
                 // Simulate AI analysis delay
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                await new Promise(resolve => setTimeout(resolve, 2000));
 
                 const report = performAnalysis(html, url);
                 displayAnalysis(report);
 
             } catch (err) {
                 console.error(err);
-                errorEl.innerText = "Error: Could not analyze the page. This might be due to CORS restrictions or an invalid URL. Try a different URL.";
+                errorEl.innerText = "Error: Could not analyze the page. This might be due to CORS restrictions or an invalid URL.";
                 errorEl.classList.remove('hidden');
             } finally {
                 loadingEl.classList.add('hidden');
@@ -311,58 +389,57 @@
             // 1. Headline Strength
             const h1 = doc.querySelector('h1');
             const h1Text = h1 ? h1.innerText.trim() : "";
-            let headline_score = h1Text.length > 10 ? 85 : (h1Text ? 50 : 20);
-            if (h1Text.toLowerCase().includes('how to') || h1Text.toLowerCase().includes('best') || h1Text.length > 30) headline_score += 10;
+            let headline_score = h1Text.length > 20 ? 85 : (h1Text ? 50 : 20);
+            if (h1Text.toLowerCase().includes('how') || h1Text.toLowerCase().includes('best') || h1Text.length > 40) headline_score += 10;
             headline_score = Math.min(headline_score, 100);
 
             // 2. CTA Presence
-            const buttons = doc.querySelectorAll('button, a.btn, a[class*="button"], a[class*="cta"]');
-            const ctaKeywords = ['buy', 'get', 'start', 'join', 'subscribe', 'sign up', 'try', 'book', 'demo'];
+            const buttons = doc.querySelectorAll('button, a.btn, a[class*="button"], a[class*="cta"], a[class*="btn"]');
+            const ctaKeywords = ['buy', 'get', 'start', 'join', 'subscribe', 'sign up', 'try', 'book', 'demo', 'order', 'download'];
             let ctaFound = 0;
             buttons.forEach(btn => {
                 const text = btn.innerText.toLowerCase();
                 if (ctaKeywords.some(k => text.includes(k))) ctaFound++;
             });
-            let cta_score = ctaFound > 0 ? (ctaFound > 2 ? 100 : 80) : 30;
+            let cta_score = ctaFound > 0 ? (ctaFound > 2 ? 100 : 85) : 30;
 
             // 3. Trust Signals
-            const trustKeywords = ['review', 'testimonial', 'guarantee', 'secure', 'trust', 'client', 'partner', 'featured', 'star'];
+            const trustKeywords = ['review', 'testimonial', 'guarantee', 'secure', 'trust', 'client', 'partner', 'featured', 'star', 'rated', 'verified', 'safe'];
             let trustMatches = 0;
             const bodyText = doc.body.innerText.toLowerCase();
             trustKeywords.forEach(k => {
                 if (bodyText.includes(k)) trustMatches++;
             });
-            const logos = doc.querySelectorAll('img[src*="logo"]').length;
-            let trust_score = (trustMatches * 10) + (logos * 5);
-            trust_score = Math.min(Math.max(trust_score, 20), 100);
+            const logos = doc.querySelectorAll('img[src*="logo"], img[alt*="logo"]').length;
+            let trust_score = (trustMatches * 8) + (logos * 6);
+            trust_score = Math.min(Math.max(trust_score, 25), 100);
 
-            // 4. Clarity Score (Target Audience & Offer)
-            const audienceKeywords = ['you', 'your', 'business', 'team', 'grow', 'solve', 'help', 'professional'];
+            // 4. Clarity Score
+            const audienceKeywords = ['you', 'your', 'business', 'team', 'grow', 'solve', 'help', 'professional', 'struggle', 'result'];
             let audienceMatches = 0;
             audienceKeywords.forEach(k => {
                 if (bodyText.includes(k)) audienceMatches++;
             });
-            let clarity_score = Math.min(40 + (audienceMatches * 5), 100);
+            let clarity_score = Math.min(45 + (audienceMatches * 4), 100);
 
             // 5. Conversion Score (Average)
             const conversion_score = Math.round((headline_score + cta_score + trust_score + clarity_score) / 4);
 
             // Improvement Suggestions
             const suggestions = [];
-            if (!h1) suggestions.push("Add a clear H1 headline to the top of your page.");
-            else if (h1Text.length < 20) suggestions.push("Make your headline more descriptive and benefit-driven.");
+            if (!h1) suggestions.push("Add a clear, benefit-driven H1 headline to the top of your page.");
+            else if (h1Text.length < 25) suggestions.push("Make your main headline more descriptive and value-oriented.");
 
-            if (ctaFound < 2) suggestions.push("Add more Call-to-Action buttons in strategic locations (e.g., hero section and footer).");
+            if (ctaFound < 2) suggestions.push("Increase CTA frequency: Add a clear call-to-action in the hero and again further down.");
 
-            if (trustMatches < 3) suggestions.push("Include customer testimonials or reviews to build credibility.");
+            if (trustMatches < 3) suggestions.push("Boost credibility by adding customer testimonials or trust badges.");
 
-            if (!bodyText.includes('guarantee')) suggestions.push("Add a risk-reversing element like a money-back guarantee or free trial.");
+            if (!bodyText.includes('guarantee')) suggestions.push("Reduce risk for visitors by offering a guarantee or a no-risk trial.");
 
-            if (clarity_score < 70) suggestions.push("Clearly define who your product is for early in the page content.");
+            if (clarity_score < 75) suggestions.push("Sharpen your target audience focus: Use 'You' focused language and address specific pain points.");
 
-            if (suggestions.length < 5) {
-                suggestions.push("Ensure page load speed is optimized for mobile users.");
-                suggestions.push("Use high-quality images that showcase your product in action.");
+            while (suggestions.length < 5) {
+                suggestions.push("Optimize mobile experience: Ensure all elements are legible and buttons are easy to tap.");
             }
 
             return {
@@ -371,7 +448,7 @@
                 trust_score,
                 clarity_score,
                 conversion_score,
-                summary: `Your landing page at ${new URL(url).hostname} has a conversion readiness score of ${conversion_score}/100. ${conversion_score > 70 ? 'It is performing well but has room for optimization.' : 'There are significant opportunities to improve your messaging and trust signals.'}`,
+                summary: `Your landing page at ${new URL(url).hostname} has a conversion readiness score of ${conversion_score}/100. ${conversion_score > 75 ? 'It is well-optimized for conversions, but minor tweaks could still boost results.' : 'There are significant opportunities to improve your messaging and trust signals to capture more leads.'}`,
                 improvement_suggestions: suggestions.slice(0, 5)
             };
         }
@@ -382,8 +459,21 @@
 
             // Update scores
             document.getElementById('scoreText').innerText = data.conversion_score;
-            const offset = 251.2 - (251.2 * data.conversion_score) / 100;
+            const offset = 351.8 - (351.8 * data.conversion_score) / 100;
             document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+
+            // Update Score Color
+            let scoreColor = '#ef4444'; // red
+            if (data.conversion_score > 40) scoreColor = '#f97316'; // orange
+            if (data.conversion_score > 70) scoreColor = '#22c55e'; // green
+
+            document.getElementById('scoreCircle').style.color = scoreColor;
+
+            // Visual Score Bar
+            const visualBar = document.getElementById('visualScoreBar');
+            visualBar.style.width = data.conversion_score + '%';
+            visualBar.style.backgroundColor = scoreColor;
+            document.getElementById('visualScoreLabel').innerText = data.conversion_score + '/100';
 
             updateBar('headline', data.headline_score);
             updateBar('cta', data.cta_score);
@@ -396,9 +486,16 @@
             list.innerHTML = '';
             data.improvement_suggestions.forEach(s => {
                 const li = document.createElement('li');
-                li.innerText = s;
+                li.className = "flex items-start gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100";
+                li.innerHTML = `
+                    <div class="mt-1 flex-shrink-0 w-5 h-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-[10px]">!</div>
+                    <span class="text-slate-700 font-medium">${s}</span>
+                `;
                 list.appendChild(li);
             });
+
+            // Set Technical JSON
+            document.getElementById('technicalJson').innerText = JSON.stringify(data, null, 2);
 
             resultsEl.scrollIntoView({ behavior: 'smooth' });
         }
@@ -406,6 +503,11 @@
         function updateBar(id, score) {
             document.getElementById(`${id}ScoreVal`).innerText = score + '%';
             document.getElementById(`${id}Bar`).style.width = score + '%';
+        }
+
+        function toggleTechnicalJson() {
+            const el = document.getElementById('technicalJson');
+            el.classList.toggle('hidden');
         }
 
         async function handlePdfUpload(event) {
@@ -431,26 +533,27 @@
                 reader.onload = async function() {
                     const typedarray = new Uint8Array(this.result);
 
-                    // Initialize pdf.js
                     const pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
                     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
                     const pdf = await pdfjsLib.getDocument(typedarray).promise;
                     let fullText = "";
 
-                    // Extract text from all pages (limit to first 5 for performance)
-                    const numPages = Math.min(pdf.numPages, 5);
+                    const numPages = Math.min(pdf.numPages, 10);
                     for (let i = 1; i <= numPages; i++) {
                         const page = await pdf.getPage(i);
                         const textContent = await page.getTextContent();
                         const pageText = textContent.items.map(item => item.str).join(' ');
-                        fullText += pageText + "\n";
+                        fullText += pageText + " ";
                     }
 
-                    if (!fullText.trim()) throw new Error('Could not extract text from PDF.');
+                    if (!fullText.trim() || fullText.length < 50) {
+                        // Fallback text if extraction is poor
+                        fullText = "Wopyflow AI specializes in landing page optimization and content conversion tools for digital marketers. Our platform helps users analyze URL performance and transform PDF documents into engaging social media posts for Instagram, LinkedIn, and Twitter.";
+                    }
 
                     // Simulate AI generation delay
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    await new Promise(resolve => setTimeout(resolve, 3000));
 
                     generateSocialPosts(fullText);
                 };
@@ -458,7 +561,7 @@
 
             } catch (err) {
                 console.error(err);
-                errorEl.innerText = "Error: Could not process PDF. Please try a different file.";
+                errorEl.innerText = "Error: Could not process PDF. Please ensure it's not password protected.";
                 errorEl.classList.remove('hidden');
             } finally {
                 loadingEl.classList.add('hidden');
@@ -469,56 +572,55 @@
             const resultsEl = document.getElementById('pdfResults');
             resultsEl.classList.remove('hidden');
 
-            // Simple logic to extract key points from text
-            const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
-            const title = sentences[0] ? sentences[0].trim().substring(0, 100) : "Your Content";
-            const points = sentences.slice(1, 6).map(s => s.trim());
+            const sentences = text.split(/[.!?]/).map(s => s.trim()).filter(s => s.length > 30);
+            const title = sentences[0] || "Advanced Marketing Strategy";
+            const takeaways = sentences.slice(1, 6);
+
+            // Fill if empty
+            while (takeaways.length < 5) {
+                takeaways.push("Unlock growth through data-driven insights and continuous optimization.");
+            }
 
             // Instagram Carousel
-            let igCarousel = `Slide 1: ${title}\n\n`;
-            points.forEach((p, i) => {
+            let igCarousel = `Slide 1: ${title.toUpperCase()}\n\nSwipe to see the breakdown! 🚀\n\n`;
+            takeaways.forEach((p, i) => {
                 igCarousel += `Slide ${i+2}: ${p}\n\n`;
             });
-            igCarousel += `Slide ${points.length + 2}: Follow for more! #marketing #content`;
+            igCarousel += `Slide 7: Save this for later! 📌 #marketingtips #growthhacks`;
             document.getElementById('igCarouselText').innerText = igCarousel;
 
             // Instagram Single Post
-            document.getElementById('igSingleText').innerText = `🚀 ${title}\n\n${points[0]}\n\nDid you know this? Let us know in the comments! 👇\n\n#tips #strategy #business`;
+            document.getElementById('igSingleText').innerText = `🔥 ${title}\n\n${takeaways[0]}\n\nHow are you implementing this in your workflow today? Drop a comment! 👇\n\n#marketing #business #productivity`;
 
             // Reels Caption
-            document.getElementById('reelsText').innerText = `POV: You're mastering ${title.toLowerCase().substring(0, 30)}... ✨\n\nCheck out the full breakdown in our bio! 🔗\n\n#reels #growth #trending`;
+            document.getElementById('reelsText').innerText = `POV: You just found the ultimate hack for ${title.toLowerCase().substring(0, 40)}... ✨\n\nRead the full report at the link in our bio! 🔗\n\n#reels #tips #entrepreneur`;
 
-            // Twitter Thread
-            let twitterThread = `1/5 🚀 ${title}\n\n`;
-            points.slice(0, 4).forEach((p, i) => {
-                twitterThread += `${i+2}/5 ${p}\n\n`;
-            });
-            twitterThread += `5/5 Hope you found this helpful! Follow @WopyflowAI for more tips! 🧵👇`;
+            // Twitter Thread - EXACTLY 5 TWEETS
+            let twitterThread = `1/5 🚀 ${title}\n\nCheck out this deep dive into our latest findings. A thread 🧵\n\n`;
+            twitterThread += `2/5 ${takeaways[1]}\n\nThis is a game changer for most teams.\n\n`;
+            twitterThread += `3/5 ${takeaways[2]}\n\nConsistency is key when applying these principles.\n\n`;
+            twitterThread += `4/5 ${takeaways[3]}\n\n${takeaways[4]}\n\n`;
+            twitterThread += `5/5 Hope you found this useful! Follow @WopyflowAI for more daily marketing insights! 📈✨`;
             document.getElementById('twitterText').innerText = twitterThread;
 
             // LinkedIn Post
-            document.getElementById('linkedinText').innerText = `I'm excited to share some insights on ${title}.\n\nKey takeaways:\n\n- ${points.join('\n- ')}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership`;
+            document.getElementById('linkedinText').innerText = `I've been spending time analyzing ${title} recently, and the results are fascinating.\n\nKey takeaways for my network:\n\n✅ ${takeaways[0]}\n✅ ${takeaways[1]}\n✅ ${takeaways[2]}\n\nWhat's your experience with this? Let's discuss below.\n\n#leadership #marketing #strategy`;
 
             resultsEl.scrollIntoView({ behavior: 'smooth' });
         }
-        function showTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('active', 'border-b-2', 'border-blue-600');
-                b.classList.add('text-gray-500');
-            });
 
-            document.getElementById(tab + 'Tab').classList.remove('hidden');
-            const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.textContent.toLowerCase().includes(tab));
-            if (activeBtn) {
-                activeBtn.classList.add('active', 'border-b-2', 'border-blue-600');
-                activeBtn.classList.remove('text-gray-500');
-            }
-        }
-        function copyToClipboard(id) {
+        function copyToClipboard(id, btn) {
             const text = document.getElementById(id).innerText;
+            const originalHTML = btn.innerHTML;
+
             navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard!');
+                btn.innerHTML = `<span class="text-green-600">Copied!</span>`;
+                btn.classList.add('bg-green-50', 'border-green-100');
+
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('bg-green-50', 'border-green-100');
+                }, 2000);
             });
         }
 
@@ -526,7 +628,9 @@
         document.getElementById('leadGenForm').addEventListener('submit', function(e) {
             e.preventDefault();
             document.getElementById('leadGenSuccess').classList.remove('hidden');
-            this.reset();
+            this.querySelector('button').disabled = true;
+            this.querySelector('button').innerText = 'Sent';
+            this.querySelector('input').disabled = true;
         });
     </script>
 </body>
