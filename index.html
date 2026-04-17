@@ -52,7 +52,8 @@
     <section class="py-20 px-4 text-center max-w-4xl mx-auto">
         <h2 class="text-5xl font-extrabold mb-4">Wopyflow AI</h2>
         <p class="text-2xl text-gray-600 mb-6">Analyze pages. Convert content. Publish faster.</p>
-        <p class="text-xl text-gray-500 mb-10">Free AI Marketing Tools for Faster Content and Better Conversions</p>
+        <p class="text-xl text-gray-500 mb-4">Free AI Marketing Tools for Faster Content and Better Conversions</p>
+        <p class="text-lg text-gray-500 mb-10 max-w-2xl mx-auto">Wopyflow AI is a lightweight AI marketing toolkit designed for founders, marketers and small businesses.</p>
 
         <div class="flex flex-col md:flex-row justify-center gap-4">
             <a href="#analyzer" class="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition shadow-lg">
@@ -97,6 +98,16 @@
                                 <circle id="scoreCircle" cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="text-blue-600 transition-all duration-1000" />
                             </svg>
                             <span id="scoreText" class="absolute inset-0 flex items-center justify-center text-2xl font-bold">0</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-semibold uppercase tracking-wider text-gray-500">Overall Conversion Readiness</span>
+                            <span id="conversionScoreText" class="text-sm font-bold">0/100</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden flex">
+                            <div id="conversionProgressBar" class="h-full transition-all duration-1000 bg-red-500" style="width: 0%"></div>
                         </div>
                     </div>
 
@@ -154,6 +165,14 @@
                         </ul>
                     </div>
 
+                    <div class="mb-8">
+                        <button onclick="toggleJson()" class="text-xs text-slate-400 uppercase font-semibold hover:text-slate-600 transition flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            View Technical JSON
+                        </button>
+                        <div id="jsonOutput" class="hidden mt-4 bg-slate-900 text-slate-300 p-4 rounded-lg text-xs overflow-x-auto font-mono"></div>
+                    </div>
+
                     <!-- Lead Gen Section (Nested inside Results or right after) -->
                     <div class="border-t pt-8 mt-8">
                         <h4 class="text-xl font-bold mb-4">Want a professional conversion optimization report?</h4>
@@ -190,55 +209,92 @@
                 </div>
 
                 <!-- Results Display -->
-                <div id="pdfResults" class="hidden mt-8 space-y-6">
-                    <!-- Tabs for different social platforms -->
-                    <div class="flex flex-wrap gap-2 border-b">
-                        <button onclick="showTab('instagram')" class="tab-btn active border-b-2 border-blue-600 px-4 py-2 font-medium">Instagram</button>
-                        <button onclick="showTab('reels')" class="tab-btn px-4 py-2 font-medium text-gray-500 hover:text-blue-600">Reels</button>
-                        <button onclick="showTab('twitter')" class="tab-btn px-4 py-2 font-medium text-gray-500 hover:text-blue-600">Twitter</button>
-                        <button onclick="showTab('linkedin')" class="tab-btn px-4 py-2 font-medium text-gray-500 hover:text-blue-600">LinkedIn</button>
+                <div id="pdfResults" class="hidden mt-8 space-y-8">
+
+                    <!-- Instagram Section -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 overflow-hidden">
+                        <div class="flex items-center gap-2 mb-6 border-b pb-4">
+                            <svg class="w-6 h-6 text-pink-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                            <h4 class="text-xl font-bold">Instagram</h4>
+                        </div>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between items-center mb-3">
+                                    <h5 class="font-semibold text-gray-700">Carousel Caption</h5>
+                                    <button onclick="copyToClipboard('igCarouselText', this)" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition font-medium">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                        Copy
+                                    </button>
+                                </div>
+                                <div id="igCarouselText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border text-sm text-gray-700 leading-relaxed"></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-3">
+                                    <h5 class="font-semibold text-gray-700">Single Post Caption</h5>
+                                    <button onclick="copyToClipboard('igSingleText', this)" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition font-medium">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                        Copy
+                                    </button>
+                                </div>
+                                <div id="igSingleText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border text-sm text-gray-700 leading-relaxed"></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div id="instagramTab" class="tab-content">
-                        <div class="mb-6">
-                            <div class="flex justify-between items-center mb-2">
-                                <h5 class="font-bold">Carousel Caption</h5>
-                                <button onclick="copyToClipboard('igCarouselText')" class="text-sm text-blue-600 hover:underline">Copy</button>
-                            </div>
-                            <div id="igCarouselText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
+                    <!-- Reels Section -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 overflow-hidden">
+                        <div class="flex items-center gap-2 mb-6 border-b pb-4">
+                            <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 2H7.5C4.46243 2 2 4.46243 2 7.5V16.5C2 19.5376 4.46243 22 7.5 22H16.5C19.5376 22 22 19.5376 22 16.5V7.5C22 4.46243 19.5376 2 16.5 2ZM20 16.5C20 18.433 18.433 20 16.5 20H7.5C5.567 20 4 18.433 4 16.5V7.5C4 5.567 5.567 4 7.5 4H16.5C18.433 4 20 5.567 20 7.5V16.5Z"/><path d="M15 10.5V13.5C15 14.3284 14.3284 15 13.5 15H10.5C9.67157 15 9 14.3284 9 13.5V10.5C9 9.67157 9.67157 9 10.5 9H13.5C14.3284 9 15 9.67157 15 10.5Z"/></svg>
+                            <h4 class="text-xl font-bold">Reels</h4>
                         </div>
                         <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <h5 class="font-bold">Single Post Caption</h5>
-                                <button onclick="copyToClipboard('igSingleText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                            <div class="flex justify-between items-center mb-3">
+                                <h5 class="font-semibold text-gray-700">Reels Caption</h5>
+                                <button onclick="copyToClipboard('reelsText', this)" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition font-medium">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                    Copy
+                                </button>
                             </div>
-                            <div id="igSingleText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
+                            <div id="reelsText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border text-sm text-gray-700 leading-relaxed"></div>
                         </div>
                     </div>
 
-                    <div id="reelsTab" class="tab-content hidden">
-                        <div class="flex justify-between items-center mb-2">
-                            <h5 class="font-bold">Reels Caption</h5>
-                            <button onclick="copyToClipboard('reelsText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                    <!-- Twitter Section -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 overflow-hidden">
+                        <div class="flex items-center gap-2 mb-6 border-b pb-4">
+                            <svg class="w-6 h-6 text-sky-500" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                            <h4 class="text-xl font-bold">Twitter</h4>
                         </div>
-                        <div id="reelsText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h5 class="font-semibold text-gray-700">Thread (5 Tweets)</h5>
+                                <button onclick="copyToClipboard('twitterText', this)" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition font-medium">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div id="twitterText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border text-sm text-gray-700 leading-relaxed"></div>
+                        </div>
                     </div>
 
-                    <div id="twitterTab" class="tab-content hidden">
-                        <div class="flex justify-between items-center mb-2">
-                            <h5 class="font-bold">Twitter Thread (5 Tweets)</h5>
-                            <button onclick="copyToClipboard('twitterText')" class="text-sm text-blue-600 hover:underline">Copy</button>
+                    <!-- LinkedIn Section -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 overflow-hidden">
+                        <div class="flex items-center gap-2 mb-6 border-b pb-4">
+                            <svg class="w-6 h-6 text-blue-700" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                            <h4 class="text-xl font-bold">LinkedIn</h4>
                         </div>
-                        <div id="twitterText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h5 class="font-semibold text-gray-700">LinkedIn Post</h5>
+                                <button onclick="copyToClipboard('linkedinText', this)" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition font-medium">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div id="linkedinText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border text-sm text-gray-700 leading-relaxed"></div>
+                        </div>
                     </div>
 
-                    <div id="linkedinTab" class="tab-content hidden">
-                        <div class="flex justify-between items-center mb-2">
-                            <h5 class="font-bold">LinkedIn Post</h5>
-                            <button onclick="copyToClipboard('linkedinText')" class="text-sm text-blue-600 hover:underline">Copy</button>
-                        </div>
-                        <div id="linkedinText" class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap border"></div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -254,7 +310,7 @@
                 Contact Us
             </a>
             <div class="mt-12 pt-8 border-t border-gray-800 text-sm text-gray-500">
-                &copy; 2023 Wopyflow AI. All rights reserved.
+                &copy; 2025 Wopyflow AI. All rights reserved.
             </div>
         </div>
     </footer>
@@ -360,9 +416,18 @@
 
             if (clarity_score < 70) suggestions.push("Clearly define who your product is for early in the page content.");
 
-            if (suggestions.length < 5) {
-                suggestions.push("Ensure page load speed is optimized for mobile users.");
-                suggestions.push("Use high-quality images that showcase your product in action.");
+            const fallbacks = [
+                "Ensure page load speed is optimized for mobile users.",
+                "Use high-quality images that showcase your product in action.",
+                "Implement A/B testing for your primary CTA copy.",
+                "Simplify your navigation to keep users focused on the main offer.",
+                "Add a FAQ section to address common customer objections."
+            ];
+
+            while (suggestions.length < 5) {
+                const fallback = fallbacks.find(f => !suggestions.includes(f));
+                if (fallback) suggestions.push(fallback);
+                else break;
             }
 
             return {
@@ -376,7 +441,10 @@
             };
         }
 
+        let lastAnalysisData = null;
+
         function displayAnalysis(data) {
+            lastAnalysisData = data;
             const resultsEl = document.getElementById('analyzerResults');
             resultsEl.classList.remove('hidden');
 
@@ -384,6 +452,17 @@
             document.getElementById('scoreText').innerText = data.conversion_score;
             const offset = 251.2 - (251.2 * data.conversion_score) / 100;
             document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+
+            // Update conversion progress bar
+            const progressBar = document.getElementById('conversionProgressBar');
+            document.getElementById('conversionScoreText').innerText = `${data.conversion_score}/100`;
+            progressBar.style.width = `${data.conversion_score}%`;
+
+            // Color logic for bar
+            progressBar.classList.remove('bg-red-500', 'bg-orange-500', 'bg-green-500');
+            if (data.conversion_score < 40) progressBar.classList.add('bg-red-500');
+            else if (data.conversion_score < 70) progressBar.classList.add('bg-orange-500');
+            else progressBar.classList.add('bg-green-500');
 
             updateBar('headline', data.headline_score);
             updateBar('cta', data.cta_score);
@@ -400,7 +479,15 @@
                 list.appendChild(li);
             });
 
+            // Update JSON output
+            document.getElementById('jsonOutput').innerText = JSON.stringify(data, null, 2);
+
             resultsEl.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleJson() {
+            const jsonEl = document.getElementById('jsonOutput');
+            jsonEl.classList.toggle('hidden');
         }
 
         function updateBar(id, score) {
@@ -470,34 +557,49 @@
             resultsEl.classList.remove('hidden');
 
             // Simple logic to extract key points from text
-            const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
-            const title = sentences[0] ? sentences[0].trim().substring(0, 100) : "Your Content";
-            const points = sentences.slice(1, 6).map(s => s.trim());
+            const sentences = text.split(/[.!?]/).map(s => s.trim()).filter(s => s.length > 20);
+
+            const title = (sentences[0] || "Expert Insights & Strategy").substring(0, 100);
+
+            // Ensure we have enough points, use fallbacks if needed
+            const fallbacks = [
+                "Always focus on the core value proposition for your audience.",
+                "Consistency in your marketing message builds long-term brand trust.",
+                "Data-driven decisions outperform gut feelings in digital growth.",
+                "Simplicity in design and copy leads to higher conversion rates.",
+                "Engage with your community to foster loyalty and advocacy."
+            ];
+
+            const points = [];
+            for (let i = 1; i <= 5; i++) {
+                if (sentences[i]) points.push(sentences[i]);
+                else points.push(fallbacks[i-1]);
+            }
 
             // Instagram Carousel
             let igCarousel = `Slide 1: ${title}\n\n`;
             points.forEach((p, i) => {
                 igCarousel += `Slide ${i+2}: ${p}\n\n`;
             });
-            igCarousel += `Slide ${points.length + 2}: Follow for more! #marketing #content`;
+            igCarousel += `Slide 7: Follow @WopyflowAI for more deep dives! #marketing #content #growth`;
             document.getElementById('igCarouselText').innerText = igCarousel;
 
             // Instagram Single Post
-            document.getElementById('igSingleText').innerText = `🚀 ${title}\n\n${points[0]}\n\nDid you know this? Let us know in the comments! 👇\n\n#tips #strategy #business`;
+            document.getElementById('igSingleText').innerText = `🚀 ${title}\n\n${points[0]}\n\nDid you know this? Let us know in the comments! 👇\n\n#tips #strategy #business #wopyflow`;
 
             // Reels Caption
-            document.getElementById('reelsText').innerText = `POV: You're mastering ${title.toLowerCase().substring(0, 30)}... ✨\n\nCheck out the full breakdown in our bio! 🔗\n\n#reels #growth #trending`;
+            document.getElementById('reelsText').innerText = `POV: You're mastering ${title.toLowerCase().substring(0, 30)}... ✨\n\nCheck out the full breakdown in our bio! 🔗\n\n#reels #growth #trending #expert`;
 
-            // Twitter Thread
+            // Twitter Thread (Exactly 5 tweets)
             let twitterThread = `1/5 🚀 ${title}\n\n`;
-            points.slice(0, 4).forEach((p, i) => {
-                twitterThread += `${i+2}/5 ${p}\n\n`;
-            });
+            twitterThread += `2/5 ${points[0]}\n\n`;
+            twitterThread += `3/5 ${points[1]}\n\n`;
+            twitterThread += `4/5 ${points[2]}\n\n`;
             twitterThread += `5/5 Hope you found this helpful! Follow @WopyflowAI for more tips! 🧵👇`;
             document.getElementById('twitterText').innerText = twitterThread;
 
             // LinkedIn Post
-            document.getElementById('linkedinText').innerText = `I'm excited to share some insights on ${title}.\n\nKey takeaways:\n\n- ${points.join('\n- ')}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership`;
+            document.getElementById('linkedinText').innerText = `I'm excited to share some insights on ${title}.\n\nKey takeaways:\n\n- ${points.slice(0, 4).join('\n- ')}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership #wopyflow`;
 
             resultsEl.scrollIntoView({ behavior: 'smooth' });
         }
@@ -515,10 +617,20 @@
                 activeBtn.classList.remove('text-gray-500');
             }
         }
-        function copyToClipboard(id) {
+        function copyToClipboard(id, btn) {
             const text = document.getElementById(id).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard!');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = `
+                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <span class="text-green-600">Copied!</span>
+                `;
+                btn.classList.add('bg-green-50');
+
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.classList.remove('bg-green-50');
+                }, 2000);
             });
         }
 
