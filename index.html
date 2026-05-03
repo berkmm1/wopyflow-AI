@@ -56,7 +56,7 @@
         <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">Wopyflow AI is a lightweight AI marketing toolkit designed for founders, marketers and small businesses.</p>
 
         <div class="flex flex-col md:flex-row justify-center gap-4">
-            <a href="#analyzer" class="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition shadow-lg">
+            <a href="#analyzer" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:opacity-90 transition shadow-lg">
                 Analyze Landing Page
             </a>
             <a href="#generator" class="bg-white text-gray-800 border border-gray-300 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition shadow-md">
@@ -74,7 +74,7 @@
                 <div class="flex flex-col gap-4">
                     <div class="flex gap-2">
                         <input type="url" id="lpUrl" placeholder="https://yourlandingpage.com" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button onclick="analyzeUrl()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">Analyze</button>
+                        <button onclick="analyzeUrl()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition shadow-md">Analyze</button>
                     </div>
                     <p id="analyzerError" class="text-red-500 text-sm hidden"></p>
                 </div>
@@ -317,7 +317,7 @@
                 Contact Us
             </a>
             <div class="mt-12 pt-8 border-t border-gray-800 text-sm text-gray-500">
-                &copy; 2023 Wopyflow AI. All rights reserved.
+                &copy; 2025 Wopyflow AI. All rights reserved.
             </div>
         </div>
     </footer>
@@ -325,7 +325,7 @@
     <script>
         async function analyzeUrl() {
             const urlInput = document.getElementById('lpUrl');
-            const url = urlInput.value.trim();
+            let url = urlInput.value.trim();
             const errorEl = document.getElementById('analyzerError');
             const loadingEl = document.getElementById('analyzerLoading');
             const resultsEl = document.getElementById('analyzerResults');
@@ -334,6 +334,12 @@
                 errorEl.innerText = "Please enter a valid URL.";
                 errorEl.classList.remove('hidden');
                 return;
+            }
+
+            // Add protocol if missing
+            if (url && !url.match(/^https?:\/\//i)) {
+                url = 'https://' + url;
+                urlInput.value = url;
             }
 
             errorEl.classList.add('hidden');
@@ -434,6 +440,9 @@
             if (suggestions.length < 5) {
                 if (offer_score < 70) suggestions.push("Make your primary offer or pricing clearer to the visitor.");
                 suggestions.push("Ensure page load speed is optimized for mobile users.");
+                suggestions.push("Check all links and buttons to ensure they work correctly.");
+                suggestions.push("Use high-quality images that resonate with your target audience.");
+                suggestions.push("Consider adding a FAQ section to address common objections.");
             }
 
             return {
@@ -599,8 +608,9 @@
                         <span class="text-xs font-bold text-blue-400">TWEET ${i+1}</span>
                         <button onclick="copyToClipboard(this, 'tweet-${i}')" class="text-[10px] bg-gray-50 text-gray-500 px-2 py-1 rounded hover:bg-gray-100 transition">Copy</button>
                     </div>
-                    <div id="tweet-${i}" class="text-sm">${tweet}</div>
+                    <div id="tweet-${i}" class="text-sm"></div>
                 `;
+                tweetCard.querySelector(`#tweet-${i}`).textContent = tweet;
                 twitterContainer.appendChild(tweetCard);
             });
 
@@ -608,20 +618,6 @@
             document.getElementById('linkedinText').innerText = `I'm excited to share some insights on ${title}.\n\nKey takeaways:\n\n- ${points.join('\n- ')}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership`;
 
             resultsEl.scrollIntoView({ behavior: 'smooth' });
-        }
-        function showTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('active', 'border-b-2', 'border-blue-600');
-                b.classList.add('text-gray-500');
-            });
-
-            document.getElementById(tab + 'Tab').classList.remove('hidden');
-            const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.textContent.toLowerCase().includes(tab));
-            if (activeBtn) {
-                activeBtn.classList.add('active', 'border-b-2', 'border-blue-600');
-                activeBtn.classList.remove('text-gray-500');
-            }
         }
         function copyToClipboard(btn, id) {
             const text = document.getElementById(id).innerText;
