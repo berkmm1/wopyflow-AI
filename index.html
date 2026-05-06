@@ -56,7 +56,7 @@
         <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">Wopyflow AI is a lightweight AI marketing toolkit designed for founders, marketers and small businesses.</p>
 
         <div class="flex flex-col md:flex-row justify-center gap-4">
-            <a href="#analyzer" class="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition shadow-lg">
+            <a href="#analyzer" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-lg">
                 Analyze Landing Page
             </a>
             <a href="#generator" class="bg-white text-gray-800 border border-gray-300 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition shadow-md">
@@ -74,7 +74,7 @@
                 <div class="flex flex-col gap-4">
                     <div class="flex gap-2">
                         <input type="url" id="lpUrl" placeholder="https://yourlandingpage.com" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button onclick="analyzeUrl()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">Analyze</button>
+                        <button onclick="analyzeUrl()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition shadow-md">Analyze</button>
                     </div>
                     <p id="analyzerError" class="text-red-500 text-sm hidden"></p>
                 </div>
@@ -138,7 +138,7 @@
                                     <span id="audienceScoreVal" class="text-sm font-medium">0%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="audienceBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                    <div id="audienceBar" class="bg-indigo-500 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div class="mb-4">
@@ -313,11 +313,11 @@
         <div class="max-w-4xl mx-auto text-center">
             <h3 class="text-2xl font-bold mb-4">Need help improving your landing page performance?</h3>
             <p class="text-gray-400 mb-8">Contact us for professional setup and custom conversion strategies.</p>
-            <a href="mailto:hello@wopyflow.ai" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-700 transition">
+            <a href="mailto:hello@wopyflow.ai" class="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-full font-semibold hover:from-blue-700 hover:to-indigo-700 transition shadow-lg">
                 Contact Us
             </a>
             <div class="mt-12 pt-8 border-t border-gray-800 text-sm text-gray-500">
-                &copy; 2023 Wopyflow AI. All rights reserved.
+                &copy; 2025 Wopyflow AI. All rights reserved.
             </div>
         </div>
     </footer>
@@ -594,13 +594,21 @@
             tweets.forEach((tweet, i) => {
                 const tweetCard = document.createElement('div');
                 tweetCard.className = 'bg-white p-4 rounded-lg border border-blue-100 shadow-sm relative';
-                tweetCard.innerHTML = `
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs font-bold text-blue-400">TWEET ${i+1}</span>
-                        <button onclick="copyToClipboard(this, 'tweet-${i}')" class="text-[10px] bg-gray-50 text-gray-500 px-2 py-1 rounded hover:bg-gray-100 transition">Copy</button>
-                    </div>
-                    <div id="tweet-${i}" class="text-sm">${tweet}</div>
+
+                const header = document.createElement('div');
+                header.className = 'flex justify-between items-center mb-2';
+                header.innerHTML = `
+                    <span class="text-xs font-bold text-blue-400">TWEET ${i+1}</span>
+                    <button onclick="copyToClipboard(this, 'tweet-${i}')" class="text-[10px] bg-gray-50 text-gray-500 px-2 py-1 rounded hover:bg-gray-100 transition">Copy</button>
                 `;
+
+                const content = document.createElement('div');
+                content.id = `tweet-${i}`;
+                content.className = 'text-sm';
+                content.textContent = tweet;
+
+                tweetCard.appendChild(header);
+                tweetCard.appendChild(content);
                 twitterContainer.appendChild(tweetCard);
             });
 
@@ -608,20 +616,6 @@
             document.getElementById('linkedinText').innerText = `I'm excited to share some insights on ${title}.\n\nKey takeaways:\n\n- ${points.join('\n- ')}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership`;
 
             resultsEl.scrollIntoView({ behavior: 'smooth' });
-        }
-        function showTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('active', 'border-b-2', 'border-blue-600');
-                b.classList.add('text-gray-500');
-            });
-
-            document.getElementById(tab + 'Tab').classList.remove('hidden');
-            const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.textContent.toLowerCase().includes(tab));
-            if (activeBtn) {
-                activeBtn.classList.add('active', 'border-b-2', 'border-blue-600');
-                activeBtn.classList.remove('text-gray-500');
-            }
         }
         function copyToClipboard(btn, id) {
             const text = document.getElementById(id).innerText;
