@@ -56,7 +56,7 @@
         <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">Wopyflow AI is a lightweight AI marketing toolkit designed for founders, marketers and small businesses.</p>
 
         <div class="flex flex-col md:flex-row justify-center gap-4">
-            <a href="#analyzer" class="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition shadow-lg">
+            <a href="#analyzer" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-lg">
                 Analyze Landing Page
             </a>
             <a href="#generator" class="bg-white text-gray-800 border border-gray-300 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition shadow-md">
@@ -74,7 +74,7 @@
                 <div class="flex flex-col gap-4">
                     <div class="flex gap-2">
                         <input type="url" id="lpUrl" placeholder="https://yourlandingpage.com" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button onclick="analyzeUrl()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">Analyze</button>
+                        <button onclick="analyzeUrl()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition">Analyze</button>
                     </div>
                     <p id="analyzerError" class="text-red-500 text-sm hidden"></p>
                 </div>
@@ -138,7 +138,7 @@
                                     <span id="audienceScoreVal" class="text-sm font-medium">0%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="audienceBar" class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                    <div id="audienceBar" class="bg-indigo-500 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div class="mb-4">
@@ -154,7 +154,7 @@
                     </div>
 
                     <!-- Conversion Score Visual Bar -->
-                    <div class="mb-8 p-4 bg-gray-50 rounded-xl">
+                    <div class="mb-8 p-4 bg-gray-50 rounded-2xl">
                         <div class="flex justify-between mb-2">
                             <span class="font-bold">Overall Conversion Readiness</span>
                             <span class="text-sm text-gray-500">0-100 Scale</span>
@@ -169,7 +169,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-blue-50 p-6 rounded-xl mb-8">
+                    <div class="bg-blue-50 p-6 rounded-2xl mb-8">
                         <h4 class="font-bold mb-2">Summary</h4>
                         <p id="analysisSummary" class="text-gray-700"></p>
                     </div>
@@ -206,7 +206,7 @@
             <div class="card p-8">
                 <h3 class="text-2xl font-bold mb-6">PDF to Social Media Post Generator</h3>
                 <div class="flex flex-col gap-4">
-                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center cursor-pointer hover:border-blue-500 transition" onclick="document.getElementById('pdfInput').click()">
+                    <div class="border-2 border-dashed border-gray-300 rounded-2xl p-10 text-center cursor-pointer hover:border-blue-500 transition" onclick="document.getElementById('pdfInput').click()">
                         <input type="file" id="pdfInput" accept="application/pdf" class="hidden" onchange="handlePdfUpload(event)">
                         <div class="flex justify-center mb-4">
                             <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
@@ -233,7 +233,7 @@
                             Instagram Posts
                         </h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
+                            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
                                 <div class="flex justify-between items-center mb-3">
                                     <h5 class="font-bold text-sm uppercase text-gray-500">Carousel Caption</h5>
                                     <button onclick="copyToClipboard(this, 'igCarouselText')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg font-semibold hover:bg-blue-100 transition flex items-center gap-1">
@@ -243,7 +243,7 @@
                                 </div>
                                 <div id="igCarouselText" class="text-sm whitespace-pre-wrap"></div>
                             </div>
-                            <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
+                            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
                                 <div class="flex justify-between items-center mb-3">
                                     <h5 class="font-bold text-sm uppercase text-gray-500">Single Post</h5>
                                     <button onclick="copyToClipboard(this, 'igSingleText')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg font-semibold hover:bg-blue-100 transition flex items-center gap-1">
@@ -262,7 +262,7 @@
                             <span class="bg-black w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs">RL</span>
                             Reels Content
                         </h4>
-                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
+                        <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
                             <div class="flex justify-between items-center mb-3">
                                 <h5 class="font-bold text-sm uppercase text-gray-500">Reels Caption</h5>
                                 <button onclick="copyToClipboard(this, 'reelsText')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg font-semibold hover:bg-blue-100 transition flex items-center gap-1">
@@ -291,7 +291,7 @@
                             <span class="bg-blue-700 w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs">LI</span>
                             LinkedIn Post
                         </h4>
-                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
+                        <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
                             <div class="flex justify-between items-center mb-3">
                                 <h5 class="font-bold text-sm uppercase text-gray-500">Professional Post</h5>
                                 <button onclick="copyToClipboard(this, 'linkedinText')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg font-semibold hover:bg-blue-100 transition flex items-center gap-1">
@@ -313,7 +313,7 @@
         <div class="max-w-4xl mx-auto text-center">
             <h3 class="text-2xl font-bold mb-4">Need help improving your landing page performance?</h3>
             <p class="text-gray-400 mb-8">Contact us for professional setup and custom conversion strategies.</p>
-            <a href="mailto:hello@wopyflow.ai" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-700 transition">
+            <a href="mailto:hello@wopyflow.ai" class="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-full font-semibold hover:from-blue-700 hover:to-indigo-700 transition shadow-lg">
                 Contact Us
             </a>
             <div class="mt-12 pt-8 border-t border-gray-800 text-sm text-gray-500">
@@ -431,9 +431,17 @@
 
             if (audience_score < 70) suggestions.push("Clearly define who your product is for early in the page content.");
 
-            if (suggestions.length < 5) {
-                if (offer_score < 70) suggestions.push("Make your primary offer or pricing clearer to the visitor.");
-                suggestions.push("Ensure page load speed is optimized for mobile users.");
+            while (suggestions.length < 5) {
+                const defaults = [
+                    "Make your primary offer or pricing clearer to the visitor.",
+                    "Ensure page load speed is optimized for mobile users.",
+                    "Use high-quality images that resonate with your target audience.",
+                    "Add a clear sense of urgency or scarcity to your offer.",
+                    "Keep your form fields to a minimum to increase conversions."
+                ];
+                const next = defaults.find(d => !suggestions.includes(d));
+                if (next) suggestions.push(next);
+                else break;
             }
 
             return {
@@ -477,10 +485,10 @@
             document.getElementById('analysisSummary').innerText = data.summary;
 
             const list = document.getElementById('suggestionList');
-            list.innerHTML = '';
+            list.textContent = '';
             data.improvement_suggestions.forEach(s => {
                 const li = document.createElement('li');
-                li.innerText = s;
+                li.textContent = s;
                 list.appendChild(li);
             });
 
@@ -590,17 +598,33 @@
             tweets.push(`5/5 Hope you found this helpful! Follow @WopyflowAI for more tips! 🚀📈`);
 
             const twitterContainer = document.getElementById('twitterThreadContainer');
-            twitterContainer.innerHTML = '';
+            twitterContainer.textContent = '';
             tweets.forEach((tweet, i) => {
                 const tweetCard = document.createElement('div');
                 tweetCard.className = 'bg-white p-4 rounded-lg border border-blue-100 shadow-sm relative';
-                tweetCard.innerHTML = `
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs font-bold text-blue-400">TWEET ${i+1}</span>
-                        <button onclick="copyToClipboard(this, 'tweet-${i}')" class="text-[10px] bg-gray-50 text-gray-500 px-2 py-1 rounded hover:bg-gray-100 transition">Copy</button>
-                    </div>
-                    <div id="tweet-${i}" class="text-sm">${tweet}</div>
-                `;
+
+                const header = document.createElement('div');
+                header.className = 'flex justify-between items-center mb-2';
+
+                const span = document.createElement('span');
+                span.className = 'text-xs font-bold text-blue-400';
+                span.textContent = `TWEET ${i+1}`;
+
+                const copyBtn = document.createElement('button');
+                copyBtn.onclick = function() { copyToClipboard(this, `tweet-${i}`); };
+                copyBtn.className = 'text-[10px] bg-gray-50 text-gray-500 px-2 py-1 rounded hover:bg-gray-100 transition';
+                copyBtn.textContent = 'Copy';
+
+                header.appendChild(span);
+                header.appendChild(copyBtn);
+
+                const content = document.createElement('div');
+                content.id = `tweet-${i}`;
+                content.className = 'text-sm';
+                content.textContent = tweet;
+
+                tweetCard.appendChild(header);
+                tweetCard.appendChild(content);
                 twitterContainer.appendChild(tweetCard);
             });
 
@@ -608,20 +632,6 @@
             document.getElementById('linkedinText').innerText = `I'm excited to share some insights on ${title}.\n\nKey takeaways:\n\n- ${points.join('\n- ')}\n\nWhat are your thoughts on this? Let's discuss in the comments!\n\n#professional #networking #leadership`;
 
             resultsEl.scrollIntoView({ behavior: 'smooth' });
-        }
-        function showTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('active', 'border-b-2', 'border-blue-600');
-                b.classList.add('text-gray-500');
-            });
-
-            document.getElementById(tab + 'Tab').classList.remove('hidden');
-            const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.textContent.toLowerCase().includes(tab));
-            if (activeBtn) {
-                activeBtn.classList.add('active', 'border-b-2', 'border-blue-600');
-                activeBtn.classList.remove('text-gray-500');
-            }
         }
         function copyToClipboard(btn, id) {
             const text = document.getElementById(id).innerText;
@@ -658,10 +668,21 @@
         }
 
         // Lead gen form submission
-        document.getElementById('leadGenForm').addEventListener('submit', function(e) {
+        document.getElementById('leadGenForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            document.getElementById('leadGenSuccess').classList.remove('hidden');
-            this.reset();
+            const email = this.querySelector('input[type="email"]').value;
+
+            // Mock AJAX submission
+            try {
+                // In a real scenario, you would fetch to your endpoint here
+                // await fetch('/.netlify/functions/lead-gen', { method: 'POST', body: JSON.stringify({ email }) });
+                console.log("Lead captured:", email);
+
+                document.getElementById('leadGenSuccess').classList.remove('hidden');
+                this.reset();
+            } catch (err) {
+                console.error("Lead submission failed", err);
+            }
         });
     </script>
 </body>
